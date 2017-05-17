@@ -2,7 +2,9 @@
 # Issue:  https://github.com/mattn/goveralls/issues/20
 # Source: https://github.com/uber/go-torch/blob/63da5d33a225c195fea84610e2456d5f722f3963/.test-cover.sh
 CI=$1
+TOKEN=$2
 echo "run for $CI"
+echo "with $(go version)"
 
 echo "mode: count" > profile.cov
 FAIL=0
@@ -22,7 +24,7 @@ done
 
 # Failures have incomplete results, so don't send
 if [ "$FAIL" -eq 0 ]; then
-  goveralls -service=$CI -v -coverprofile=profile.cov
+  goveralls -v -coverprofile=profile.cov -service=$CI -repotoken=$TOKEN
 fi
 
 exit $FAIL
