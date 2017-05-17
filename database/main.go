@@ -7,7 +7,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 
-	"github.com/genofire/golang-lib/lib/log"
+	"github.com/genofire/golang-lib/log"
 )
 
 // Database connection for writing purposes
