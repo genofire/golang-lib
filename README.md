@@ -1,2 +1,2 @@
-# golang-lib
+# golang-lib [![Build Status](https://travis-ci.org/genofire/golang-lib.svg?branch=master)](https://travis-ci.org/genofire/golang-lib) [![CircleCI](https://circleci.com/gh/genofire/golang-lib/tree/master.svg?style=svg)](https://circleci.com/gh/genofire/golang-lib/tree/master) [![Coverage Status](https://coveralls.io/repos/github/genofire/golang-lib/badge.svg?branch=master)](https://coveralls.io/github/genofire/golang-lib?branch=master) [![GoDoc](https://godoc.org/github.com/genofire/golang-lib?status.svg)](https://godoc.org/github.com/genofire/golang-lib)
 some packages collected for easy and often used functions
