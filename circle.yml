@@ -6,7 +6,7 @@ machine:
 
 dependencies:
   override:
-    - go get -t -u -v github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/...
+    - go get -d -t -u -v github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/...
  
 test:
   pre:
