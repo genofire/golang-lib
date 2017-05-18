@@ -6,13 +6,12 @@ machine:
 
 dependencies:
   override:
-    - mkdir -p ~/.go_workspace/src/github.com/${CIRCLE_PROJECT_USERNAME}
-    - ln -s ${HOME}/${CIRCLE_PROJECT_REPONAME} ${HOME}/.go_workspace/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
-    - go get -t -d -v ./...
+    - go get -t -d -v github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/...
  
 test:
   pre:
     - go get github.com/mattn/goveralls
     - go get golang.org/x/tools/cmd/cover
   override:
-    - ./.test-coverage circle-ci ${COVERALLS_REPO_TOKEN}
+    - cd ${GOPATH}/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/
+    - ${GOPATH}/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/.test-coverage circle-ci ${COVERALLS_REPO_TOKEN}
