@@ -22,5 +22,4 @@ func TestWorker(t *testing.T) {
 	w.Close()
 
 	assert.Equal(3, runtime)
-	time.Sleep(time.Duration(8) * time.Millisecond)
 }
