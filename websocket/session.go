@@ -40,38 +40,44 @@ func (s *SessionManager) HandleMessage(msg *Message) bool {
 		s.clientToSession[id] = msg.ID
 		s.sessionToClient[msg.ID] = list
 		return true
-	} else {
+	} else if msg.From != nil {
 		id := msg.From.GetID()
 		msg.Session = s.clientToSession[id]
 	}
 
 	return false
 }
-func (s *SessionManager) Remove(c *Client) {
+
+// Remove clients from SessionManagerer
+// - 1. result: clients removed from session manager
+// - 2. result: session closed and all clients removed
+func (s *SessionManager) Remove(c *Client) (client bool, session bool) {
 	if c == nil {
-		return
+		return false, false
 	}
 	if id := c.GetID(); id != "" {
 		session := s.clientToSession[id]
+		defer delete(s.clientToSession, id)
 		if session != uuid.Nil {
 			s.Lock()
 			defer s.Unlock()
-			list := s.sessionToClient[session]
-			delete(list, id)
-			if len(list) > 0 {
-				s.sessionToClient[session] = list
+			clients := s.sessionToClient[session]
+			delete(clients, id)
+			if len(clients) > 0 {
+				s.sessionToClient[session] = clients
+				return true, false
 			} else {
 				delete(s.sessionToClient, session)
+				return true, true
 			}
 		}
-		delete(s.clientToSession, id)
 	}
-
+	return false, false
 }
 
 func (s *SessionManager) Send(id uuid.UUID, msg *Message) {
-	session := s.sessionToClient[id]
-	for _, c := range session {
+	clients := s.sessionToClient[id]
+	for _, c := range clients {
 		c.Write(msg)
 	}
 }

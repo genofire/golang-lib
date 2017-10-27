@@ -3,11 +3,11 @@ package database
 
 import (
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
 
-	"github.com/genofire/golang-lib/log"
+	log "github.com/sirupsen/logrus"
 )
 
 // Database connection for writing purposes
@@ -36,7 +36,7 @@ type Config struct {
 
 // Function to open a database and set the given configuration
 func Open(c Config) (err error) {
-	writeLog := log.Log.WithField("db", "write")
+	writeLog := log.WithField("db", "write")
 	config = &c
 	Write, err = gorm.Open(config.Type, config.Connection)
 	if err != nil {
@@ -48,7 +48,7 @@ func Open(c Config) (err error) {
 	Write.Callback().Create().Remove("gorm:update_time_stamp")
 	Write.Callback().Update().Remove("gorm:update_time_stamp")
 	if len(config.ReadConnection) > 0 {
-		readLog := log.Log.WithField("db", "read")
+		readLog := log.WithField("db", "read")
 		Read, err = gorm.Open(config.Type, config.ReadConnection)
 		if err != nil {
 			return

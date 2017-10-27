@@ -3,6 +3,7 @@ package websocket
 import (
 	"io"
 
+	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/gorilla/websocket"
@@ -11,6 +12,7 @@ import (
 const channelBufSize = 100
 
 type Client struct {
+	id        uuid.UUID
 	server    *Server
 	ws        *websocket.Conn
 	out       chan *Message
@@ -27,6 +29,7 @@ func NewClient(s *Server, ws *websocket.Conn) *Client {
 	return &Client{
 		server:    s,
 		ws:        ws,
+		id:        uuid.New(), // fallback id (for testing)
 		out:       make(chan *Message, channelBufSize),
 		writeQuit: make(chan bool),
 		readQuit:  make(chan bool),
@@ -34,14 +37,16 @@ func NewClient(s *Server, ws *websocket.Conn) *Client {
 }
 
 func (c *Client) GetID() string {
-	return c.ws.RemoteAddr().String()
+	if c.ws != nil {
+		return c.ws.RemoteAddr().String()
+	}
+	return c.id.String()
 }
 
 func (c *Client) Write(msg *Message) {
 	select {
 	case c.out <- msg:
 	default:
-		c.server.SessionManager.Remove(c)
 		c.server.DelClient(c)
 		c.Close()
 	}
@@ -57,13 +62,12 @@ func (c *Client) Close() {
 func (c *Client) Listen() {
 	go c.listenWrite()
 	c.server.AddClient(c)
-	c.server.SessionManager.Init(c)
 	c.listenRead()
 }
 
 func (c *Client) handleInput(msg *Message) {
 	msg.From = c
-	if c.server.SessionManager.HandleMessage(msg) {
+	if sm := c.server.sessionManager; sm != nil && sm.HandleMessage(msg) {
 		return
 	}
 	if ok, err := msg.Validate(); ok {
@@ -81,7 +85,6 @@ func (c *Client) listenWrite() {
 			websocket.WriteJSON(c.ws, msg)
 
 		case <-c.writeQuit:
-			c.server.SessionManager.Remove(c)
 			c.server.DelClient(c)
 			close(c.out)
 			close(c.writeQuit)
@@ -96,7 +99,6 @@ func (c *Client) listenRead() {
 		select {
 
 		case <-c.readQuit:
-			c.server.SessionManager.Remove(c)
 			c.server.DelClient(c)
 			close(c.readQuit)
 			return

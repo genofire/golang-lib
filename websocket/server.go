@@ -12,15 +12,15 @@ type Server struct {
 	msgChanIn      chan *Message
 	clients        map[string]*Client
 	clientsMutex   sync.Mutex
-	SessionManager *SessionManager
+	sessionManager *SessionManager
 	upgrader       websocket.Upgrader
 }
 
-func NewServer(msgChanIn chan *Message) *Server {
+func NewServer(msgChanIn chan *Message, sessionManager *SessionManager) *Server {
 	return &Server{
 		clients:        make(map[string]*Client),
 		msgChanIn:      msgChanIn,
-		SessionManager: NewSessionManager(),
+		sessionManager: sessionManager,
 		upgrader: websocket.Upgrader{
 			ReadBufferSize:  1024,
 			WriteBufferSize: 1024,
@@ -31,7 +31,7 @@ func NewServer(msgChanIn chan *Message) *Server {
 func (s *Server) Handler(w http.ResponseWriter, r *http.Request) {
 	conn, err := s.upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println(err)
+		log.Info(err)
 		return
 	}
 	client := NewClient(s, conn)
@@ -45,8 +45,11 @@ func (s *Server) AddClient(c *Client) {
 	}
 	if id := c.GetID(); id != "" {
 		s.clientsMutex.Lock()
-		defer s.clientsMutex.Unlock()
 		s.clients[id] = c
+		s.clientsMutex.Unlock()
+		if s.sessionManager != nil {
+			s.sessionManager.Init(c)
+		}
 	}
 }
 
@@ -58,6 +61,8 @@ func (s *Server) DelClient(c *Client) {
 		s.clientsMutex.Lock()
 		delete(s.clients, id)
 		s.clientsMutex.Unlock()
-		s.SessionManager.Remove(c)
+		if s.sessionManager != nil {
+			s.sessionManager.Remove(c)
+		}
 	}
 }

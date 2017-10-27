@@ -20,6 +20,9 @@ func TestWorker(t *testing.T) {
 	go w.Start()
 	time.Sleep(time.Duration(18) * time.Millisecond)
 	w.Close()
-
+	time.Sleep(time.Duration(18) * time.Millisecond)
 	assert.Equal(3, runtime)
+	assert.Panics(func() {
+		w.Close()
+	})
 }
