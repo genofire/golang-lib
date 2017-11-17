@@ -1,8 +1,6 @@
 package websocket
 
 import (
-	"io"
-
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 
@@ -106,10 +104,11 @@ func (c *Client) listenRead() {
 		default:
 			var msg Message
 			err := websocket.ReadJSON(c.ws, &msg)
-			if err == io.EOF {
+			if websocket.IsCloseError(err, websocket.CloseGoingAway) {
 				return
 			} else if err != nil {
-				log.Println(err, c.GetID())
+				log.Infof("error on reading %s: %s", c.GetID(), err)
+				return
 			} else {
 				c.handleInput(&msg)
 			}
