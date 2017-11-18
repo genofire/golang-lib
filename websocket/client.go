@@ -18,6 +18,12 @@ type Client struct {
 	readQuit  chan bool
 }
 
+func NewTestClient(out chan *Message) *Client {
+	return &Client{
+		out: out,
+	}
+}
+
 func NewClient(s *Server, ws *websocket.Conn) *Client {
 
 	if ws == nil {
