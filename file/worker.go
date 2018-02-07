@@ -3,7 +3,7 @@ package file
 import (
 	"time"
 
-	"github.com/genofire/golang-lib/worker"
+	"dev.sum7.eu/genofire/golang-lib/worker"
 )
 
 func NewSaveJSONWorker(repeat time.Duration, path string, data interface{}) *worker.Worker {
