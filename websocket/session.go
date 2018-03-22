@@ -76,6 +76,8 @@ func (s *SessionManager) Remove(c *Client) (client bool, session bool) {
 }
 
 func (s *SessionManager) Send(id uuid.UUID, msg *Message) {
+	s.Lock()
+	defer s.Unlock()
 	clients := s.sessionToClient[id]
 	for _, c := range clients {
 		c.Write(msg)

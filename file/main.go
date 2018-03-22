@@ -15,8 +15,7 @@ func ReadTOML(path string, data interface{}) error {
 		return err
 	}
 
-	err = toml.Unmarshal(file, data)
-	if err != nil {
+	if err := toml.Unmarshal(file, data); err != nil {
 		return err
 	}
 
@@ -30,8 +29,7 @@ func ReadJSON(path string, data interface{}) error {
 		return err
 	}
 
-	err = json.NewDecoder(file).Decode(data)
-	if err != nil {
+	if err := json.NewDecoder(file).Decode(data); err != nil {
 		return err
 	}
 
@@ -42,17 +40,16 @@ func ReadJSON(path string, data interface{}) error {
 func SaveJSON(outputFile string, data interface{}) error {
 	tmpFile := outputFile + ".tmp"
 
-	f, err := os.OpenFile(tmpFile, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+	file, err := os.OpenFile(tmpFile, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		return err
 	}
 
-	err = json.NewEncoder(f).Encode(data)
-	if err != nil {
+	if err := json.NewEncoder(file).Encode(data); err != nil {
 		return err
 	}
 
-	f.Close()
+	file.Close()
 	if err := os.Rename(tmpFile, outputFile); err != nil {
 		return err
 	}

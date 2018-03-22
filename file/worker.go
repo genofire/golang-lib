@@ -10,6 +10,6 @@ func NewSaveJSONWorker(repeat time.Duration, path string, data interface{}) *wor
 	saveWorker := worker.NewWorker(repeat, func() {
 		SaveJSON(path, data)
 	})
-	go saveWorker.Start()
+	saveWorker.Start()
 	return saveWorker
 }

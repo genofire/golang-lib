@@ -1,0 +1,19 @@
+pipeline:
+  test:
+    image: golang:latest
+    commands:
+      - go get -d -t ./...
+      - go get -u github.com/mattn/goveralls
+      - go get -u golang.org/x/tools/cmd/cover
+      - ./.test-coverage
+  codestyle:
+    image: golang:latest
+    commands:
+      - go get github.com/client9/misspell/cmd/misspell
+      - misspell -error .
+      - if [ -n "$(gofmt -s -l .)" ]; then echo "Go code is not formatted, run 'gofmt -s -w .'" >&2; exit 1; fi
+  test-race:
+    image: golang:latest
+    commands:
+      - go get -d -t ./...
+      - go test -v -cover --race ./...

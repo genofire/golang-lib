@@ -28,17 +28,19 @@ func NewWorker(every time.Duration, f func()) (w *Worker) {
 // (please us it as a go routine with go w.Start())
 func (w *Worker) Start() {
 	w.wg.Add(1)
-	ticker := time.NewTicker(w.every)
-	for {
-		select {
-		case <-ticker.C:
-			w.run()
-		case <-w.quit:
-			ticker.Stop()
-			w.wg.Done()
-			return
+	go func() {
+		defer w.wg.Done()
+		ticker := time.NewTicker(w.every)
+		for {
+			select {
+			case <-ticker.C:
+				w.run()
+			case <-w.quit:
+				ticker.Stop()
+				return
+			}
 		}
-	}
+	}()
 }
 
 // Function to stop the Worker

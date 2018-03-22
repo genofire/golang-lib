@@ -8,7 +8,6 @@ import (
 )
 
 // Function to test the logging
-// Input: pointer to teh testing object
 func TestGetIP(t *testing.T) {
 	assertion := assert.New(t)
 
