@@ -66,3 +66,11 @@ func (s *Server) DelClient(c *Client) {
 		}
 	}
 }
+
+func (s *Server) SendAll(msg *Message) {
+	s.clientsMutex.Lock()
+	defer s.clientsMutex.Unlock()
+	for _, c := range s.clients {
+		c.Write(msg)
+	}
+}

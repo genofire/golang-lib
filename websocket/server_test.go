@@ -5,6 +5,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/google/uuid"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,4 +32,46 @@ func TestServer(t *testing.T) {
 
 	srv.DelClient(nil)
 	srv.DelClient(c)
+}
+
+func TestServerSendAll(t *testing.T) {
+	assert := assert.New(t)
+	srv := NewServer(nil, nil)
+	assert.NotNil(srv)
+
+	out1 := make(chan *Message)
+	c1 := &Client{
+		id:     uuid.New(),
+		out:    out1,
+		server: srv,
+	}
+
+	out2 := make(chan *Message)
+	c2 := &Client{
+		id:     uuid.New(),
+		out:    out2,
+		server: srv,
+	}
+	srv.AddClient(c1)
+	srv.AddClient(c2)
+
+	go func() {
+
+		msg := <-out1
+		assert.Equal("hi", msg.Subject)
+
+	}()
+	go func() {
+
+		msg := <-out2
+		assert.Equal("hi", msg.Subject)
+
+	}()
+
+	srv.SendAll(&Message{
+		Subject: "hi",
+	})
+
+	srv.DelClient(c2)
+	srv.DelClient(c1)
 }
