@@ -54,7 +54,7 @@ func TestSaveJSON(t *testing.T) {
 	err = SaveJSON(tmpfile.Name(), tmpfile.Name)
 	assert.Error(err, "could not save func")
 
-	err = SaveJSON("/dev/null", 4)
+	err = SaveJSON("/proc/readonly", 4)
 	assert.Error(err, "could not save to /dev/null")
 
 	var testvalue int

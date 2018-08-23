@@ -1,19 +1,27 @@
 pipeline:
-  test:
+  # Library does not need to build
+  #build:
+  #  image: golang:latest
+  #  commands:
+  #    - go get -d -t ./...
+  #    - go install
+  test-coverage:
     image: golang:latest
     commands:
-      - go get -d -t ./...
       - go get -u github.com/mattn/goveralls
       - go get -u golang.org/x/tools/cmd/cover
-      - ./.test-coverage
+      - go get -d -t ./...
+      - ./contrib/ci/check-coverage drone.io
   codestyle:
     image: golang:latest
     commands:
+      - go get -d -t ./...
+      - ./contrib/ci/check-testfiles
+      - ./contrib/ci/check-gofmt
       - go get github.com/client9/misspell/cmd/misspell
       - misspell -error .
-      - if [ -n "$(gofmt -s -l .)" ]; then echo "Go code is not formatted, run 'gofmt -s -w .'" >&2; exit 1; fi
   test-race:
     image: golang:latest
     commands:
       - go get -d -t ./...
-      - go test -v -cover --race ./...
+      - go test -race ./...

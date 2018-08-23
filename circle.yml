@@ -1,18 +1,50 @@
-machine:
-  environment:
-    GOROOT: ""
-    PATH: "/usr/local/go/bin:/usr/local/go_workspace/bin:~/.go_workspace/bin:${PATH}"
-    GOPATH: "${HOME}/.go_workspace"
-
-dependencies:
-  override:
-    - mkdir -p ~/.go_workspace/src/github.com/${CIRCLE_PROJECT_USERNAME}
-    - ln -s ${HOME}/${CIRCLE_PROJECT_REPONAME} ${HOME}/.go_workspace/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
-    - go get -t -d -v ./...
- 
-test:
-  pre:
-    - go get -u github.com/mattn/goveralls
-    - go get -u golang.org/x/tools/cmd/cover
-  override:
-    - ./.test-coverage circle-ci
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/golang:latest
+    working_directory: /go/src/github.com/genofire/golang-lib
+    steps:
+      - checkout
+      - run: go get -d -t ./...
+      - run: go install
+  test-coverage:
+    docker:
+      - image: circleci/golang:latest
+    working_directory: /go/src/github.com/genofire/golang-lib
+    steps:
+      - checkout
+      - run: go get -d -t ./...
+      - run: go get github.com/mattn/goveralls
+      - run: go get golang.org/x/tools/cmd/cover
+      - run: ./contrib/ci/check-coverage circle-ci
+      - store_test_results:
+          path: ./
+          destination: profile.cov
+  codestyle:
+    docker:
+      - image: circleci/golang:latest
+    working_directory: /go/src/github.com/genofire/golang-lib
+    steps:
+      - checkout
+      - run: go get -d -t ./...
+      - run: ./contrib/ci/check-testfiles
+      - run: ./contrib/ci/check-gofmt
+      - run: go get github.com/client9/misspell/cmd/misspell
+      - run: misspell -error .
+  test_race:
+    docker:
+      - image: circleci/golang:latest
+    working_directory: /go/src/github.com/genofire/golang-lib
+    steps:
+      - checkout
+      - run: go get -d -t ./...
+      - run: go test -race ./...
+workflows:
+  version: 2
+  build_and_tests:
+    jobs:
+      #- build # Library does not need to build
+      - test-coverage
+      - codestyle
+      - test_race

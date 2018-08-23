@@ -3,3 +3,14 @@ go:
   - tip
 install:
   - go get -t dev.sum7.eu/genofire/golang-lib/...
+  - go get github.com/mattn/goveralls
+  - go get golang.org/x/tools/cmd/cover
+  - go get github.com/client9/misspell/cmd/misspell
+script:
+  - cd $GOPATH/src/dev.sum7.eu/genofire/golang-lib
+  # - go install # Library does not need to build
+  - ./contrib/ci/check-coverage travis-ci
+  - ./contrib/ci/check-testfiles
+  - ./contrib/ci/check-gofmt
+  - misspell -error .
+  - go test -race ./...
