@@ -8,18 +8,14 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
-// ReadConfigFile reads a config model from path of a yml file
+// ReadTOML reads a config model from path of a yml file
 func ReadTOML(path string, data interface{}) error {
 	file, err := ioutil.ReadFile(path)
 	if err != nil {
 		return err
 	}
 
-	if err := toml.Unmarshal(file, data); err != nil {
-		return err
-	}
-
-	return nil
+	return toml.Unmarshal(file, data)
 }
 
 // ReadJSON reads a config model from path of a yml file
@@ -29,11 +25,7 @@ func ReadJSON(path string, data interface{}) error {
 		return err
 	}
 
-	if err := json.NewDecoder(file).Decode(data); err != nil {
-		return err
-	}
-
-	return nil
+	return json.NewDecoder(file).Decode(data)
 }
 
 // SaveJSON to path
@@ -45,13 +37,11 @@ func SaveJSON(outputFile string, data interface{}) error {
 		return err
 	}
 
-	if err := json.NewEncoder(file).Encode(data); err != nil {
+	err = json.NewEncoder(file).Encode(data)
+	if err != nil {
 		return err
 	}
 
 	file.Close()
-	if err := os.Rename(tmpFile, outputFile); err != nil {
-		return err
-	}
-	return nil
+	return os.Rename(tmpFile, outputFile)
 }

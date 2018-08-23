@@ -1,4 +1,4 @@
-// Package that provides the logic of the webserver
+// Package http provides the logic of the webserver
 package http
 
 import (
@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-// Function to read data from a http request via json format (input)
+// Read data from a http request via json format (input)
 func Read(r *http.Request, to interface{}) (err error) {
 	if !strings.Contains(r.Header.Get("Content-Type"), "application/json") {
 		err = errors.New("no json request received")
@@ -18,7 +18,7 @@ func Read(r *http.Request, to interface{}) (err error) {
 	return
 }
 
-// Function to write data as json to a http response (output)
+// Write data as json to a http response (output)
 func Write(w http.ResponseWriter, data interface{}) {
 	js, err := json.Marshal(data)
 	if err != nil {

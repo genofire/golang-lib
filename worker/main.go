@@ -1,4 +1,4 @@
-// Package with a lib for cronjobs to run in background
+// Package worker a lib for cronjobs to run in background
 package worker
 
 import (
@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// Struct which handles the job
+// Worker Struct which handles the job
 type Worker struct {
 	every time.Duration
 	run   func()
@@ -14,7 +14,7 @@ type Worker struct {
 	wg    sync.WaitGroup
 }
 
-// Function to create a new Worker with a timestamp, run, every and it's function
+// NewWorker create a Worker with a timestamp, run, every and it's function
 func NewWorker(every time.Duration, f func()) (w *Worker) {
 	w = &Worker{
 		every: every,
@@ -24,8 +24,7 @@ func NewWorker(every time.Duration, f func()) (w *Worker) {
 	return
 }
 
-// Function to start the Worker
-// (please us it as a go routine with go w.Start())
+// Start the Worker
 func (w *Worker) Start() {
 	w.wg.Add(1)
 	go func() {
@@ -43,7 +42,7 @@ func (w *Worker) Start() {
 	}()
 }
 
-// Function to stop the Worker
+// Close stops the Worker
 func (w *Worker) Close() {
 	close(w.quit)
 	w.wg.Wait()

@@ -1,8 +1,9 @@
-// Package that provides the functionality to open, close and use a database
+// Package database provides the functionality to open, close and use a database
 package database
 
 import (
 	"github.com/jinzhu/gorm"
+	// load gorm defaults dialects
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
@@ -10,10 +11,10 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// Database connection for writing purposes
+// Write Database connection for writing purposes
 var Write *gorm.DB
 
-// Database connection for reading purposes
+// Read Database connection for reading purposes
 var Read *gorm.DB
 
 // Configuration files
@@ -22,7 +23,7 @@ var (
 	runtime []interface{}
 )
 
-// Configuration of the database connection
+// Config of the database connection
 type Config struct {
 	// type of the database, currently supports sqlite and postgres
 	Type string
@@ -34,7 +35,7 @@ type Config struct {
 	Logging bool
 }
 
-// Function to open a database and set the given configuration
+// Open database and set the given configuration
 func Open(c Config) (err error) {
 	writeLog := log.WithField("db", "write")
 	config = &c
@@ -65,7 +66,7 @@ func Open(c Config) (err error) {
 	return
 }
 
-// Function to safely close the database
+// Close connnection to database safely
 func Close() {
 	Write.Close()
 	if len(config.ReadConnection) > 0 {
@@ -73,7 +74,7 @@ func Close() {
 	}
 }
 
-// Function to add a model to the runtime
+// AddModel to the runtime
 func AddModel(m interface{}) {
 	runtime = append(runtime, m)
 }

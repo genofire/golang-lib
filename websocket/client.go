@@ -7,8 +7,9 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-const channelBufSize = 100
+const channelBufSize = 1000
 
+// Client of Websocket Server Connection
 type Client struct {
 	id        uuid.UUID
 	server    *Server
@@ -16,12 +17,6 @@ type Client struct {
 	out       chan *Message
 	writeQuit chan bool
 	readQuit  chan bool
-}
-
-func NewTestClient(out chan *Message) *Client {
-	return &Client{
-		out: out,
-	}
 }
 
 func NewClient(s *Server, ws *websocket.Conn) *Client {

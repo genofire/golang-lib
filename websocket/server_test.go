@@ -3,10 +3,10 @@ package websocket
 import (
 	"net/http"
 	"net/http/httptest"
+	"sync"
 	"testing"
 
 	"github.com/google/uuid"
-
 	"github.com/stretchr/testify/assert"
 )
 
@@ -39,14 +39,14 @@ func TestServerSendAll(t *testing.T) {
 	srv := NewServer(nil, nil)
 	assert.NotNil(srv)
 
-	out1 := make(chan *Message)
+	out1 := make(chan *Message, 2)
 	c1 := &Client{
 		id:     uuid.New(),
 		out:    out1,
 		server: srv,
 	}
 
-	out2 := make(chan *Message)
+	out2 := make(chan *Message, 2)
 	c2 := &Client{
 		id:     uuid.New(),
 		out:    out2,
@@ -55,22 +55,21 @@ func TestServerSendAll(t *testing.T) {
 	srv.AddClient(c1)
 	srv.AddClient(c2)
 
-	go func() {
+	wg := sync.WaitGroup{}
 
-		msg := <-out1
+	client := func(out chan *Message) {
+		msg := <-out
 		assert.Equal("hi", msg.Subject)
-
-	}()
-	go func() {
-
-		msg := <-out2
-		assert.Equal("hi", msg.Subject)
-
-	}()
+		wg.Done()
+	}
+	wg.Add(2)
+	go client(out1)
+	go client(out2)
 
 	srv.SendAll(&Message{
 		Subject: "hi",
 	})
+	wg.Wait()
 
 	srv.DelClient(c2)
 	srv.DelClient(c1)
