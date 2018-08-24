@@ -2,6 +2,8 @@ package websocket
 
 import (
 	"net/http"
+
+	"github.com/google/uuid"
 )
 
 // MessageHandleFunc for handling messages
@@ -38,6 +40,22 @@ func (ws *WebsocketHandlerService) messageHandler() {
 // SetHandler for a message type by subject
 func (ws *WebsocketHandlerService) SetHandler(subject string, f MessageHandleFunc) {
 	ws.handlers[subject] = f
+}
+
+// SendAll see Server.SendAll
+func (ws *WebsocketHandlerService) SendAll(msg *Message) {
+	if server := ws.server; server != nil {
+		server.SendAll(msg)
+	}
+}
+
+// SendSession see message to all connection of one session
+func (ws *WebsocketHandlerService) SendSession(id uuid.UUID, msg *Message) {
+	if server := ws.server; server != nil {
+		if mgmt := server.sessionManager; mgmt != nil {
+			mgmt.Send(id, msg)
+		}
+	}
 }
 
 // Listen on net/http server at `path` and start running handling

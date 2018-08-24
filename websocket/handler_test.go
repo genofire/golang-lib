@@ -4,6 +4,8 @@ import (
 	"sync"
 	"testing"
 
+	"github.com/google/uuid"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -39,4 +41,7 @@ func TestHandler(t *testing.T) {
 	}
 	chanMsg <- &Message{Subject: "mist", Body: "unexpected"}
 	wg.Wait()
+
+	handlerService.SendAll(&Message{Subject: "dummy", Body: "100% maybe"})
+	handlerService.SendSession(uuid.New(), &Message{Subject: "dummy", Body: "100% maybe"})
 }
