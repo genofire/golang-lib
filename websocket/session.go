@@ -6,14 +6,17 @@ import (
 	"github.com/google/uuid"
 )
 
+// SessionMessageInit subject in messages
 const SessionMessageInit = "session_init"
 
+// SessionManager to handle reconnected websocket
 type SessionManager struct {
 	sessionToClient map[uuid.UUID]map[string]*Client
 	clientToSession map[string]uuid.UUID
 	sync.Mutex
 }
 
+// NewSessionManager to get a new SessionManager
 func NewSessionManager() *SessionManager {
 	return &SessionManager{
 		sessionToClient: make(map[uuid.UUID]map[string]*Client),
@@ -21,9 +24,15 @@ func NewSessionManager() *SessionManager {
 	}
 }
 
+// Init Session for given Client
 func (s *SessionManager) Init(c *Client) {
-	c.Write(&Message{Subject: SessionMessageInit})
+	c.Write(&Message{
+		From:    c,
+		Subject: SessionMessageInit,
+	})
 }
+
+// HandleMessage of client for Session
 func (s *SessionManager) HandleMessage(msg *Message) bool {
 	if msg == nil {
 		return false
@@ -40,7 +49,8 @@ func (s *SessionManager) HandleMessage(msg *Message) bool {
 		s.clientToSession[id] = msg.ID
 		s.sessionToClient[msg.ID] = list
 		return true
-	} else if msg.From != nil {
+	}
+	if msg.From != nil {
 		id := msg.From.GetID()
 		msg.Session = s.clientToSession[id]
 	}
@@ -66,15 +76,15 @@ func (s *SessionManager) Remove(c *Client) (client bool, session bool) {
 			if len(clients) > 0 {
 				s.sessionToClient[session] = clients
 				return true, false
-			} else {
-				delete(s.sessionToClient, session)
-				return true, true
 			}
+			delete(s.sessionToClient, session)
+			return true, true
 		}
 	}
 	return false, false
 }
 
+// Send a message to a specific Session (and all his Websocket clients)
 func (s *SessionManager) Send(id uuid.UUID, msg *Message) {
 	s.Lock()
 	defer s.Unlock()

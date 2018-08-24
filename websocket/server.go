@@ -8,6 +8,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// Server of websocket
 type Server struct {
 	msgChanIn      chan *Message
 	clients        map[string]*Client
@@ -16,6 +17,7 @@ type Server struct {
 	upgrader       websocket.Upgrader
 }
 
+// NewServer to get a new Server for websockets
 func NewServer(msgChanIn chan *Message, sessionManager *SessionManager) *Server {
 	return &Server{
 		clients:        make(map[string]*Client),
@@ -28,6 +30,7 @@ func NewServer(msgChanIn chan *Message, sessionManager *SessionManager) *Server 
 	}
 }
 
+// Handler of websocket Server for binding on webserver
 func (s *Server) Handler(w http.ResponseWriter, r *http.Request) {
 	conn, err := s.upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -39,7 +42,7 @@ func (s *Server) Handler(w http.ResponseWriter, r *http.Request) {
 	client.Listen()
 }
 
-func (s *Server) AddClient(c *Client) {
+func (s *Server) addClient(c *Client) {
 	if c == nil {
 		return
 	}
@@ -53,7 +56,7 @@ func (s *Server) AddClient(c *Client) {
 	}
 }
 
-func (s *Server) DelClient(c *Client) {
+func (s *Server) delClient(c *Client) {
 	if c == nil {
 		return
 	}
@@ -66,6 +69,8 @@ func (s *Server) DelClient(c *Client) {
 		}
 	}
 }
+
+// SendAll to Send a message on every Client
 func (s *Server) SendAll(msg *Message) {
 	s.clientsMutex.Lock()
 	defer s.clientsMutex.Unlock()

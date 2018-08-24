@@ -25,13 +25,13 @@ func TestServer(t *testing.T) {
 		out:    out,
 		server: srv,
 	}
-	srv.AddClient(nil)
-	go srv.AddClient(c)
+	srv.addClient(nil)
+	go srv.addClient(c)
 	msg := <-out
 	assert.Equal(SessionMessageInit, msg.Subject)
 
-	srv.DelClient(nil)
-	srv.DelClient(c)
+	srv.delClient(nil)
+	srv.delClient(c)
 }
 
 func TestServerSendAll(t *testing.T) {
@@ -52,8 +52,8 @@ func TestServerSendAll(t *testing.T) {
 		out:    out2,
 		server: srv,
 	}
-	srv.AddClient(c1)
-	srv.AddClient(c2)
+	srv.addClient(c1)
+	srv.addClient(c2)
 
 	wg := sync.WaitGroup{}
 
@@ -71,6 +71,6 @@ func TestServerSendAll(t *testing.T) {
 	})
 	wg.Wait()
 
-	srv.DelClient(c2)
-	srv.DelClient(c1)
+	srv.delClient(c2)
+	srv.delClient(c1)
 }

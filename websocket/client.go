@@ -19,12 +19,11 @@ type Client struct {
 	readQuit  chan bool
 }
 
+// NewClient by websocket
 func NewClient(s *Server, ws *websocket.Conn) *Client {
-
 	if ws == nil {
 		log.Panic("ws cannot be nil")
 	}
-
 	return &Client{
 		server:    s,
 		ws:        ws,
@@ -35,6 +34,7 @@ func NewClient(s *Server, ws *websocket.Conn) *Client {
 	}
 }
 
+// GetID of Client ( UUID or Address to Client)
 func (c *Client) GetID() string {
 	if c.ws != nil {
 		return c.ws.RemoteAddr().String()
@@ -42,41 +42,45 @@ func (c *Client) GetID() string {
 	return c.id.String()
 }
 
+// Write Message to Client
 func (c *Client) Write(msg *Message) {
 	select {
 	case c.out <- msg:
 	default:
-		c.server.DelClient(c)
+		c.server.delClient(c)
 		c.Close()
 	}
 }
 
+// Close Client
 func (c *Client) Close() {
 	c.writeQuit <- true
 	c.readQuit <- true
 	log.Info("client disconnecting...", c.GetID())
 }
 
-// Listen Write and Read request via channel
+// Listen write and read request via channel
 func (c *Client) Listen() {
 	go c.listenWrite()
-	c.server.AddClient(c)
+	c.server.addClient(c)
 	c.listenRead()
 }
 
+// handleInput manage session and valide message before send to server
 func (c *Client) handleInput(msg *Message) {
 	msg.From = c
 	if sm := c.server.sessionManager; sm != nil && sm.HandleMessage(msg) {
 		return
 	}
 	if ok, err := msg.Validate(); ok {
+		msg.server = c.server
 		c.server.msgChanIn <- msg
 	} else {
 		log.Println("no valid msg for:", c.GetID(), "error:", err, "\nmessage:", msg)
 	}
 }
 
-// Listen write request via channel
+// listenWrite request via channel
 func (c *Client) listenWrite() {
 	for {
 		select {
@@ -84,7 +88,7 @@ func (c *Client) listenWrite() {
 			websocket.WriteJSON(c.ws, msg)
 
 		case <-c.writeQuit:
-			c.server.DelClient(c)
+			c.server.delClient(c)
 			close(c.out)
 			close(c.writeQuit)
 			return
@@ -92,13 +96,13 @@ func (c *Client) listenWrite() {
 	}
 }
 
-// Listen read request via channel
+// listenRead request via channel
 func (c *Client) listenRead() {
 	for {
 		select {
 
 		case <-c.readQuit:
-			c.server.DelClient(c)
+			c.server.delClient(c)
 			close(c.readQuit)
 			return
 

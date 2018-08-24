@@ -1,4 +1,4 @@
-// Package worker a lib for cronjobs to run in background
+// Package worker to run functions like a cronjob in background
 package worker
 
 import (
