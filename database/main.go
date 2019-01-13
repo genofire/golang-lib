@@ -8,7 +8,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/bdlm/log"
 )
 
 // Write Database connection for writing purposes

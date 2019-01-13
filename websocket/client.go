@@ -2,7 +2,7 @@ package websocket
 
 import (
 	"github.com/google/uuid"
-	log "github.com/sirupsen/logrus"
+	"github.com/bdlm/log"
 
 	"github.com/gorilla/websocket"
 )
@@ -22,7 +22,7 @@ type Client struct {
 // NewClient by websocket
 func NewClient(s *Server, ws *websocket.Conn) *Client {
 	if ws == nil {
-		log.Panic("ws cannot be nil")
+		log.WithField("modul", "websocket").Panic("client cannot be created without websocket")
 	}
 	return &Client{
 		server:    s,
@@ -56,7 +56,7 @@ func (c *Client) Write(msg *Message) {
 func (c *Client) Close() {
 	c.writeQuit <- true
 	c.readQuit <- true
-	log.Info("client disconnecting...", c.GetID())
+	log.WithField("modul", "websocket").Info("client disconnecting...", c.GetID())
 }
 
 // Listen write and read request via channel
@@ -76,7 +76,7 @@ func (c *Client) handleInput(msg *Message) {
 		msg.server = c.server
 		c.server.msgChanIn <- msg
 	} else {
-		log.Println("no valid msg for:", c.GetID(), "error:", err, "\nmessage:", msg)
+		log.WithField("modul", "websocket").Println("no valid msg for:", c.GetID(), "error:", err, "\nmessage:", msg)
 	}
 }
 
@@ -112,7 +112,7 @@ func (c *Client) listenRead() {
 			if websocket.IsCloseError(err, websocket.CloseGoingAway) {
 				return
 			} else if err != nil {
-				log.Infof("error on reading %s: %s", c.GetID(), err)
+				log.WithField("modul", "websocket").Warnf("error on reading %s: %s", c.GetID(), err)
 				return
 			} else {
 				c.handleInput(&msg)

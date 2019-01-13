@@ -5,7 +5,7 @@ import (
 	"sync"
 
 	"github.com/gorilla/websocket"
-	log "github.com/sirupsen/logrus"
+	"github.com/bdlm/log"
 )
 
 // Server of websocket
@@ -34,7 +34,7 @@ func NewServer(msgChanIn chan *Message, sessionManager *SessionManager) *Server 
 func (s *Server) Handler(w http.ResponseWriter, r *http.Request) {
 	conn, err := s.upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Info(err)
+		log.WithField("modul", "websocket").Warnf("error during upgrade to websocket: %s", err)
 		return
 	}
 	client := NewClient(s, conn)
