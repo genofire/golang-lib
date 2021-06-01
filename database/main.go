@@ -2,11 +2,11 @@
 package database
 
 import (
-	"github.com/jinzhu/gorm"
-	// load gorm defaults dialects
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"gorm.io/gorm"
+	// load gorm defaults driver
+	_ "gorm.io/driver/mysql"
+	_ "gorm.io/driver/postgres"
+	_ "gorm.io/driver/sqlite"
 
 	"github.com/bdlm/log"
 )
