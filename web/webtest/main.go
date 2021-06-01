@@ -17,6 +17,7 @@ import (
 )
 
 var (
+	// DBConnection - url to database on setting up default WebService for webtest
 	DBConnection = "user=root password=root dbname=defaultdb host=localhost port=26257 sslmode=disable"
 )
 
@@ -28,11 +29,13 @@ type testServer struct {
 	lastCookies []*http.Cookie
 }
 
+// Login Request format (maybe just internal usage)
 type Login struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
+// New starts WebService for testing
 func New(assert *assert.Assertions) *testServer {
 	// db setup
 	dbConfig := database.Database{
@@ -68,33 +71,37 @@ func New(assert *assert.Assertions) *testServer {
 		assert: assert,
 	}
 }
-func (this *testServer) DatabaseMigration(f func(db *database.Database)) {
-	f(this.db)
-	this.db.MigrateTestdata()
+
+// DatabaseMigration set up a migration on webtest WebService
+func (s *testServer) DatabaseMigration(f func(db *database.Database)) {
+	f(s.db)
+	s.db.MigrateTestdata()
 }
-func (this *testServer) Request(method, url string, body interface{}, expectCode int, jsonObj interface{}) {
+
+// Request sends a request to webtest WebService
+func (s *testServer) Request(method, url string, body interface{}, expectCode int, jsonObj interface{}) {
 	var jsonBody io.Reader
 	if body != nil {
 		if strBody, ok := body.(string); ok {
 			jsonBody = strings.NewReader(strBody)
 		} else {
 			jsonBodyArray, err := json.Marshal(body)
-			this.assert.Nil(err, "no request created")
+			s.assert.Nil(err, "no request created")
 			jsonBody = bytes.NewBuffer(jsonBodyArray)
 		}
 	}
 	req, err := http.NewRequest(method, url, jsonBody)
-	this.assert.Nil(err, "no request created")
-	if len(this.lastCookies) > 0 {
-		for _, c := range this.lastCookies {
+	s.assert.Nil(err, "no request created")
+	if len(s.lastCookies) > 0 {
+		for _, c := range s.lastCookies {
 			req.AddCookie(c)
 		}
 	}
 	w := httptest.NewRecorder()
-	this.gin.ServeHTTP(w, req)
+	s.gin.ServeHTTP(w, req)
 
 	// valid statusCode
-	this.assert.Equal(expectCode, w.Code, "expected http status code")
+	s.assert.Equal(expectCode, w.Code, "expected http status code")
 	if expectCode != w.Code {
 		fmt.Printf("wrong status code, body:%v\n", w.Body)
 		return
@@ -103,14 +110,14 @@ func (this *testServer) Request(method, url string, body interface{}, expectCode
 	if jsonObj != nil {
 		// fetch JSON
 		err = json.NewDecoder(w.Body).Decode(jsonObj)
-		this.assert.Nil(err, "decode json")
+		s.assert.Nil(err, "decode json")
 	}
 
 	result := w.Result()
 	if result != nil {
 		cookies := result.Cookies()
 		if len(cookies) > 0 {
-			this.lastCookies = cookies
+			s.lastCookies = cookies
 		}
 	}
 }
