@@ -10,7 +10,7 @@ var (
 	modules []ModuleRegisterFunc
 )
 
-// ModuleRegisterFunc format of module which registerd to WebService
+// ModuleRegisterFunc format of module which registered to WebService
 type ModuleRegisterFunc func(*gin.Engine, *Service)
 
 // ModuleRegister used on start of WebService
