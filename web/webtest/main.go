@@ -16,6 +16,10 @@ import (
 	"dev.sum7.eu/genofire/golang-lib/web"
 )
 
+var (
+	DBConnection = "user=root password=root dbname=defaultdb host=localhost port=26257 sslmode=disable"
+)
+
 type testServer struct {
 	db          *database.Database
 	gin         *gin.Engine
@@ -32,7 +36,7 @@ type Login struct {
 func New(assert *assert.Assertions) *testServer {
 	// db setup
 	dbConfig := database.Database{
-		Connection: "user=root password=root dbname=defaultdb host=localhost port=26257 sslmode=disable",
+		Connection: DBConnection,
 		Testdata:   true,
 		Debug:      false,
 		LogLevel:   0,

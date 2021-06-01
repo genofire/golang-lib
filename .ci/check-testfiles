@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # checks if every desired package has test files
 
 import os
@@ -11,11 +11,11 @@ missing   = False
 
 for root, dirs, files in os.walk("."):
   # ignore some paths
-  if root == "." or root == "./database/graphite" or root.startswith("./vendor") or root.startswith("./."):
+  if root == "." or root.startswith("./vendor") or root.startswith("./.") or root.startswith("./docs"):
     continue
 
   # source files but not test files?
-  if len(filter(source_re.match, files)) > 0 and len(filter(test_re.match, files)) == 0:
+  if len([f for f in files if source_re.match(f)]) > 0 and len([f for f in files if test_re.match(f)]) == 0:
     print("no test files for {}".format(root))
     missing = True
 
@@ -23,3 +23,4 @@ if missing:
   sys.exit(1)
 else:
   print("every package has test files")
+
