@@ -122,13 +122,15 @@ func (s *testServer) Request(method, url string, body interface{}, expectCode in
 	}
 }
 
-func (this *testServer) Login(login Login) {
+// Login to API by send request
+func (s *testServer) Login(login Login) {
 	// POST: correct login
-	this.Request(http.MethodPost, "/api/v1/auth/login", &login, http.StatusOK, nil)
+	s.Request(http.MethodPost, "/api/v1/auth/login", &login, http.StatusOK, nil)
 }
 
-func (this *testServer) TestLogin() {
-	this.Login(Login{
+// TestLogin to API by default login data
+func (s *testServer) TestLogin() {
+	s.Login(Login{
 		Username: "admin",
 		Password: "CHANGEME",
 	})
