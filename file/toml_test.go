@@ -26,40 +26,28 @@ func TestReadTOML(t *testing.T) {
 	assert.Equal("hallo", a.Text)
 }
 
-func TestReadJSON(t *testing.T) {
+func TestSaveTOML(t *testing.T) {
 	assert := assert.New(t)
 
-	a := struct {
-		Text string `toml:"text"`
-	}{}
-
-	err := ReadJSON("testfiles/donoexists", &a)
-	assert.Error(err, "could find file ^^")
-
-	err = ReadJSON("testfiles/trash.txt", &a)
-	assert.Error(err, "could marshel file ^^")
-
-	err = ReadJSON("testfiles/ok.json", &a)
-	assert.NoError(err)
-	assert.Equal("hallo", a.Text)
-}
-
-func TestSaveJSON(t *testing.T) {
-	assert := assert.New(t)
+	type to struct {
+		Value int `toml:"v"`
+	}
+	toSave := to{Value: 3}
 
 	tmpfile, _ := ioutil.TempFile("/tmp", "lib-json-testfile.json")
-	err := SaveJSON(tmpfile.Name(), 3)
+	err := SaveTOML(tmpfile.Name(), &toSave)
 	assert.NoError(err, "could not save temp")
 
-	err = SaveJSON(tmpfile.Name(), tmpfile.Name)
+	err = SaveTOML(tmpfile.Name(), 3)
 	assert.Error(err, "could not save func")
 
-	err = SaveJSON("/proc/readonly", 4)
+	toSave.Value = 4
+	err = SaveTOML("/proc/readonly", &toSave)
 	assert.Error(err, "could not save to /dev/null")
 
-	var testvalue int
-	err = ReadJSON(tmpfile.Name(), &testvalue)
+	testvalue := to{}
+	err = ReadTOML(tmpfile.Name(), &testvalue)
 	assert.NoError(err)
-	assert.Equal(3, testvalue)
+	assert.Equal(3, testvalue.Value)
 	os.Remove(tmpfile.Name())
 }

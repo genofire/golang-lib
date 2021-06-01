@@ -3,7 +3,6 @@ module dev.sum7.eu/genofire/golang-lib
 go 1.16
 
 require (
-	github.com/BurntSushi/toml v0.3.1
 	github.com/bdlm/log v0.1.20
 	github.com/bdlm/std v1.0.1 // indirect
 	github.com/chenjiandongx/ginprom v0.0.0-20201217063207-fe11b7f55a35
@@ -13,6 +12,9 @@ require (
 	github.com/gin-gonic/gin v1.7.2
 	github.com/go-gormigrate/gormigrate/v2 v2.0.0
 	github.com/google/uuid v1.2.0
+	github.com/kylelemons/godebug v1.1.0 // indirect
+	github.com/naoina/go-stringutil v0.1.0 // indirect
+	github.com/naoina/toml v0.1.1
 	github.com/prometheus/client_golang v1.10.0
 	github.com/stretchr/testify v1.7.0
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a

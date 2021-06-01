@@ -3,21 +3,8 @@ package file
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"os"
-
-	"github.com/BurntSushi/toml"
 )
-
-// ReadTOML reads a config model from path of a yml file
-func ReadTOML(path string, data interface{}) error {
-	file, err := ioutil.ReadFile(path)
-	if err != nil {
-		return err
-	}
-
-	return toml.Unmarshal(file, data)
-}
 
 // ReadJSON reads a config model from path of a yml file
 func ReadJSON(path string, data interface{}) error {
