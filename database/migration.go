@@ -9,6 +9,7 @@ import (
 )
 
 var (
+	// ErrNothingToMigrate if nothing has to be migrated
 	ErrNothingToMigrate = errors.New("there is nothing to migrate")
 )
 
@@ -28,9 +29,12 @@ func (config *Database) sortedMigration(testdata bool) []*gormigrate.Migration {
 	return migrations
 }
 
+// Migrate run migration
 func (config *Database) Migrate() error {
 	return config.migrate(false)
 }
+
+// MigrateTestdata run migration and testdata migration
 func (config *Database) MigrateTestdata() error {
 	return config.migrate(true)
 }
@@ -45,9 +49,12 @@ func (config *Database) migrate(testdata bool) error {
 	return m.Migrate()
 }
 
+// AddMigration add to database config migration step
 func (config *Database) AddMigration(m ...*gormigrate.Migration) {
 	config.addMigrate(false, m...)
 }
+
+// AddMigrationTestdata add to database config migration step of testdata
 func (config *Database) AddMigrationTestdata(m ...*gormigrate.Migration) {
 	config.addMigrate(true, m...)
 }
@@ -68,6 +75,7 @@ func (config *Database) addMigrate(testdata bool, m ...*gormigrate.Migration) {
 	}
 }
 
+// ReRun Rollback und run every migration step again till id
 func (config *Database) ReRun(id string) {
 	migrations := config.sortedMigration(true)
 	x := 0

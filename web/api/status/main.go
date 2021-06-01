@@ -9,13 +9,17 @@ import (
 )
 
 var (
-	VERSION string      = ""
-	UP      func() bool = func() bool {
+	// VERSION string on status API
+	VERSION string = ""
+	// UP function to detect, if API is healthy
+	UP func() bool = func() bool {
 		return true
 	}
+	// EXTRAS show more informations in status
 	EXTRAS interface{} = nil
 )
 
+// Status API response
 type Status struct {
 	Version string      `json:"version"`
 	Up      bool        `json:"up"`

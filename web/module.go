@@ -10,12 +10,15 @@ var (
 	modules []ModuleRegisterFunc
 )
 
+// ModuleRegisterFunc format of module which registerd to WebService
 type ModuleRegisterFunc func(*gin.Engine, *Service)
 
+// ModuleRegister used on start of WebService
 func ModuleRegister(f ModuleRegisterFunc) {
 	modules = append(modules, f)
 }
 
+// Bind WebService to gin.Engine
 func (ws *Service) Bind(r *gin.Engine) {
 	for _, f := range modules {
 		f(r, ws)

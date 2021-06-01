@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// JSONRequest easy get request for json
 func JSONRequest(url string, value interface{}) error {
 	var netClient = &http.Client{
 		Timeout: time.Second * 20,

@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm/logger"
 )
 
+// Database struct to read from config
 type Database struct {
 	DB                *gorm.DB
 	Connection        string          `toml:"connection"`
@@ -17,6 +18,7 @@ type Database struct {
 	migrationTestdata map[string]*gormigrate.Migration
 }
 
+// Run database config - connect and migrate
 func (config *Database) Run() error {
 	db, err := gorm.Open(postgres.Open(config.Connection), &gorm.Config{
 		Logger: logger.Default.LogMode(config.LogLevel),
@@ -36,6 +38,7 @@ func (config *Database) Run() error {
 	return nil
 }
 
+// Status get status - is database pingable
 func (config *Database) Status() error {
 	sqlDB, err := config.DB.DB()
 	if err != nil {

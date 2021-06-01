@@ -17,9 +17,12 @@ import (
 )
 
 var (
-	NAMESPACE string      = "service"
-	VERSION   string      = ""
-	UP        func() bool = func() bool {
+	// NAMESPACE of prometheus metrics
+	NAMESPACE string = "service"
+	// VERSION in prometheus metrics
+	VERSION string = ""
+	// UP function for healthy check in prometheus metrics
+	UP func() bool = func() bool {
 		return true
 	}
 )

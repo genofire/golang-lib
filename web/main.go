@@ -55,7 +55,6 @@ func (config *Service) Run() error {
 			Cache:      autocert.DirCache(config.ACME.Cache),
 		}
 		return autotls.RunWithManager(r, &m)
-	} else {
-		return r.Run(config.Listen)
 	}
+	return r.Run(config.Listen)
 }
