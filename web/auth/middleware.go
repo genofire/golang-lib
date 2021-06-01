@@ -9,6 +9,7 @@ import (
 	"dev.sum7.eu/genofire/golang-lib/web"
 )
 
+// MiddlewareLogin if user id in session for golang-gin
 func MiddlewareLogin(ws *web.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, ok := GetCurrentUserID(c)
@@ -18,9 +19,12 @@ func MiddlewareLogin(ws *web.Service) gin.HandlerFunc {
 	}
 }
 
+// MiddlewarePermissionParamUUID if user has access to obj, check access by uuid in golang-gin url param uuid
 func MiddlewarePermissionParamUUID(ws *web.Service, obj HasPermission) gin.HandlerFunc {
 	return MiddlewarePermissionParam(ws, obj, "uuid")
 }
+
+// MiddlewarePermissionParam if user has access to obj, check access in golang-gin url by param
 func MiddlewarePermissionParam(ws *web.Service, obj HasPermission, param string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userID, ok := GetCurrentUserID(c)

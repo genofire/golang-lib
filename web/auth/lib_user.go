@@ -12,6 +12,7 @@ import (
 	"dev.sum7.eu/genofire/golang-lib/web"
 )
 
+// GetCurrentUserID get UserID of session in golang-gin
 func GetCurrentUserID(c *gin.Context) (uuid.UUID, bool) {
 	session := sessions.Default(c)
 
@@ -27,6 +28,7 @@ func GetCurrentUserID(c *gin.Context) (uuid.UUID, bool) {
 	return id, true
 }
 
+// GetCurrentUser get User of session from database in golang-gin
 func GetCurrentUser(c *gin.Context, ws *web.Service) (*User, bool) {
 	id, ok := GetCurrentUserID(c)
 	if !ok {
