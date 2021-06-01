@@ -81,13 +81,13 @@ func NewEndpoint() *WebsocketEndpoint {
 }
 
 // Broadcast Message to all subscriber (exclude sender of Message)
-func (this *WebsocketEndpoint) Broadcast(msg *Message) {
-	this.subscribersMu.Lock()
-	defer this.subscribersMu.Unlock()
+func (we *WebsocketEndpoint) Broadcast(msg *Message) {
+	we.subscribersMu.Lock()
+	defer we.subscribersMu.Unlock()
 
-	this.publishLimiter.Wait(context.Background())
+	we.publishLimiter.Wait(context.Background())
 
-	for s := range this.Subscribers {
+	for s := range we.Subscribers {
 		if s == msg.Subscriber {
 			continue
 		}
