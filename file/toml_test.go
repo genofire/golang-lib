@@ -8,6 +8,21 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestTOMLDuration(t *testing.T) {
+	assert := assert.New(t)
+
+	var d TOMLDuration
+	err := d.UnmarshalText([]byte("5m"))
+	assert.NoError(err)
+
+	err = d.UnmarshalText([]byte("5z"))
+	assert.Error(err)
+
+	txt, err := d.MarshalText()
+	assert.NoError(err)
+	assert.Equal("5m0s", string(txt))
+}
+
 func TestReadTOML(t *testing.T) {
 	assert := assert.New(t)
 
