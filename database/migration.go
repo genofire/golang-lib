@@ -1,16 +1,10 @@
 package database
 
 import (
-	"errors"
 	"sort"
 
 	"github.com/bdlm/log"
 	gormigrate "github.com/go-gormigrate/gormigrate/v2"
-)
-
-var (
-	// ErrNothingToMigrate if nothing has to be migrated
-	ErrNothingToMigrate = errors.New("there is nothing to migrate")
 )
 
 func (config *Database) sortedMigration(testdata bool) []*gormigrate.Migration {

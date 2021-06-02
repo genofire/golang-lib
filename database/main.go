@@ -40,6 +40,9 @@ func (config *Database) Run() error {
 
 // Status get status - is database pingable
 func (config *Database) Status() error {
+	if config.DB == nil {
+		return ErrNotConnected
+	}
 	sqlDB, err := config.DB.DB()
 	if err != nil {
 		return err
