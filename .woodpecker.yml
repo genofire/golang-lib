@@ -19,11 +19,11 @@ pipeline:
     image: golang:latest
     commands:
       - go get -d -t ./...
-      - go test -ldflags "-X dev.sum7.eu/genofire/golang-lib/web/webtest.DBConnection=postgres://root:root@database:26257/defaultdb?sslmode=disable" $(go list ./... | grep -v /vendor/) -v -failfast -p 1 -coverprofile .testCoverage.txt
+      - go test -ldflags "-X dev.sum7.eu/genofire/golang-lib/web/webtest.DBConnection=postgres://root:root@database:26257/defaultdb?sslmode=disable -X dev.sum7.eu/genofire/golang-lib/database.DBConnection=postgres://root:root@database:26257/defaultdb?sslmode=disable" $(go list ./... | grep -v /vendor/) -v -failfast -p 1 -coverprofile .testCoverage.txt
       - go tool cover -func=".testCoverage.txt"
 
   test-race:
     image: golang:latest
     commands:
       - go get -d -t ./...
-      - go test -ldflags "-X dev.sum7.eu/genofire/golang-lib/web/webtest.DBConnection=postgres://root:root@database:26257/defaultdb?sslmode=disable" $(go list ./... | grep -v /vendor/) -race
+      - go test -ldflags "-X dev.sum7.eu/genofire/golang-lib/web/webtest.DBConnection=postgres://root:root@database:26257/defaultdb?sslmode=disable -X dev.sum7.eu/genofire/golang-lib/database.DBConnection=postgres://root:root@database:26257/defaultdb?sslmode=disable" $(go list ./... | grep -v /vendor/) -race
