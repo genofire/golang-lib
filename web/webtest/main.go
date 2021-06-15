@@ -72,6 +72,12 @@ func New(assert *assert.Assertions) *testServer {
 	}
 }
 
+// DatabaseForget, to run a test without a database
+func (s *testServer) DatabaseForget() {
+	s.ws.DB = nil
+	s.db = nil
+}
+
 // DatabaseMigration set up a migration on webtest WebService
 func (s *testServer) DatabaseMigration(f func(db *database.Database)) {
 	f(s.db)
