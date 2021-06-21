@@ -3,10 +3,12 @@ package web
 import (
 	"github.com/bdlm/log"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 	// acme
 	"github.com/gin-gonic/autotls"
 	"golang.org/x/crypto/acme/autocert"
+	// internal
+	"dev.sum7.eu/genofire/golang-lib/mailer"
+	"gorm.io/gorm"
 )
 
 // Service to store Configuration and Webserver wide objects
@@ -26,7 +28,8 @@ type Service struct {
 		Secret string `toml:"secret"`
 	} `toml:"session"`
 	// internal
-	DB *gorm.DB `toml:"-"`
+	DB     *gorm.DB        `toml:"-"`
+	Mailer *mailer.Service `toml:"-"`
 }
 
 // Run to startup all related web parts
