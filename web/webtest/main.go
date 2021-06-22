@@ -22,7 +22,7 @@ var (
 )
 
 type testServer struct {
-	db          *database.Database
+	DB          *database.Database
 	gin         *gin.Engine
 	ws          *web.Service
 	assert      *assert.Assertions
@@ -65,7 +65,7 @@ func New(assert *assert.Assertions) *testServer {
 	ws.LoadSession(r)
 	ws.Bind(r)
 	return &testServer{
-		db:     &dbConfig,
+		DB:     &dbConfig,
 		gin:    r,
 		ws:     ws,
 		assert: assert,
@@ -75,13 +75,7 @@ func New(assert *assert.Assertions) *testServer {
 // DatabaseForget, to run a test without a database
 func (s *testServer) DatabaseForget() {
 	s.ws.DB = nil
-	s.db = nil
-}
-
-// DatabaseMigration set up a migration on webtest WebService
-func (s *testServer) DatabaseMigration(f func(db *database.Database)) {
-	f(s.db)
-	s.db.MigrateTestdata()
+	s.DB = nil
 }
 
 // Request sends a request to webtest WebService

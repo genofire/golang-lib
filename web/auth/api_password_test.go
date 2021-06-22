@@ -6,7 +6,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"dev.sum7.eu/genofire/golang-lib/database"
 	"dev.sum7.eu/genofire/golang-lib/web"
 	"dev.sum7.eu/genofire/golang-lib/web/webtest"
 )
@@ -15,9 +14,8 @@ func TestAPIPassword(t *testing.T) {
 	assert := assert.New(t)
 	s := webtest.New(assert)
 	assert.NotNil(s)
-	s.DatabaseMigration(func(db *database.Database) {
-		SetupMigration(db)
-	})
+	SetupMigration(s.DB)
+	s.DB.MigrateTestdata()
 
 	passwordCurrent := "CHANGEME"
 	passwordNew := "test"
