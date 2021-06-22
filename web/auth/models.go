@@ -2,7 +2,6 @@ package auth
 
 import (
 	"github.com/google/uuid"
-	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -26,18 +25,17 @@ func NewUser(username, password string) (*User, error) {
 
 // SetPassword  - create new hash of password
 func (u *User) SetPassword(password string) error {
-	p, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	p, err := HashPassword(password)
 	if err != nil {
 		return err
 	}
-	u.Password = string(p)
+	u.Password = p
 	return nil
 }
 
 // ValidatePassword - check if given password is equal to saved hash
 func (u *User) ValidatePassword(password string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
-	return err == nil
+	return ValidatePassword(u.Password, password)
 }
 
 // HasPermission interface for middleware check in other models
