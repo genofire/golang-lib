@@ -3,7 +3,6 @@ package auth
 import (
 	"net/http"
 
-	"github.com/bdlm/log"
 	"github.com/gin-gonic/gin"
 
 	"dev.sum7.eu/genofire/golang-lib/web"
@@ -43,19 +42,15 @@ func init() {
 				return
 			}
 
-			result := ws.DB.Save(&d)
-			if err := result.Error; err != nil {
+			if err := ws.DB.Save(&d).Error; err != nil {
 				c.JSON(http.StatusInternalServerError, web.HTTPError{
 					Message: web.APIErrorInternalDatabase,
 					Error:   err.Error(),
 				})
 				return
 			}
-			if result.RowsAffected > 1 {
-				log.Panicf("there should not be more then 1 user with the same email, it was %d session", result.RowsAffected)
-			}
 
-			c.JSON(http.StatusOK, result.RowsAffected == 1)
+			c.JSON(http.StatusOK, true)
 		})
 	})
 }

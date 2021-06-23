@@ -21,11 +21,16 @@ func TestAPIPassword(t *testing.T) {
 	passwordNew := "test"
 
 	hErr := web.HTTPError{}
-	// invalid
+	// no auth
 	s.Request(http.MethodPost, "/api/v1/my/auth/password", &passwordNew, http.StatusUnauthorized, &hErr)
 	assert.Equal(APIErrorNoSession, hErr.Message)
 
 	s.TestLogin()
+
+	hErr = web.HTTPError{}
+	// invalid
+	s.Request(http.MethodPost, "/api/v1/my/auth/password", nil, http.StatusBadRequest, &hErr)
+	assert.Equal(web.APIErrorInvalidRequestFormat, hErr.Message)
 
 	res := false
 	// set new password
