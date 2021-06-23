@@ -7,6 +7,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var (
+	TestRunTLS = ""
+)
+
 func TestRun(t *testing.T) {
 	assert := assert.New(t)
 
@@ -24,6 +28,9 @@ func TestRun(t *testing.T) {
 		s.Run()
 	})
 
+	if TestRunTLS == "false" {
+		return
+	}
 	s.Listen = ""
 	// httpS - failed
 	err = s.Run()
