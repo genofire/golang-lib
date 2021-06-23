@@ -7,6 +7,7 @@ services:
 pipeline:
   lint:
     image: golang:latest
+    group: test
     commands:
       - apt update
       - apt install python3 --yes
@@ -17,6 +18,7 @@ pipeline:
 
   test-coverage:
     image: golang:latest
+    group: test
     commands:
       - go get -d -t ./...
       - go test -ldflags "-X dev.sum7.eu/genofire/golang-lib/web/webtest.DBConnection=postgres://root:root@database:26257/defaultdb?sslmode=disable -X dev.sum7.eu/genofire/golang-lib/database.DBConnection=postgres://root:root@database:26257/defaultdb?sslmode=disable" $(go list ./... | grep -v /vendor/) -v -failfast -p 1 -coverprofile .testCoverage.txt
@@ -24,6 +26,7 @@ pipeline:
 
   test-race:
     image: golang:latest
+    group: test-race
     commands:
       - go get -d -t ./...
       - go test -ldflags "-X dev.sum7.eu/genofire/golang-lib/web/webtest.DBConnection=postgres://root:root@database:26257/defaultdb?sslmode=disable -X dev.sum7.eu/genofire/golang-lib/database.DBConnection=postgres://root:root@database:26257/defaultdb?sslmode=disable" $(go list ./... | grep -v /vendor/) -race
