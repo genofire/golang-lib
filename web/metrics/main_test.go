@@ -16,4 +16,9 @@ func TestMetricsLoaded(t *testing.T) {
 
 	// GET
 	s.Request(http.MethodGet, "/metrics", nil, http.StatusOK, nil)
+
+	UP = func() bool { return false }
+
+	// GET
+	s.Request(http.MethodGet, "/metrics", nil, http.StatusOK, nil)
 }
