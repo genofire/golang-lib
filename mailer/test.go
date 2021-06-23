@@ -10,8 +10,14 @@ import (
 )
 
 type fakeServer struct {
-	s *Service
-	l net.Listener
+	s    *Service
+	l    net.Listener
+	MSGS chan msg
+}
+
+type msg struct {
+	Header textproto.MIMEHeader
+	Body   string
 }
 
 // NewFakeServer - to get mocked Service for mail-service
@@ -28,7 +34,8 @@ func NewFakeServer() (*fakeServer, *Service) {
 
 func newFakeServer(s *Service) (*fakeServer, *Service) {
 	fs := &fakeServer{
-		s: s,
+		s:    s,
+		MSGS: make(chan msg),
 	}
 	l, err := net.Listen("tcp", fmt.Sprintf("%s:%d", fs.s.SMTPHost, fs.s.SMTPPort))
 	if err != nil {
@@ -84,6 +91,30 @@ func (fs *fakeServer) handle(conn net.Conn) {
 		case "QUIT":
 			c.Cmd("221 Bye")
 			return
+		case "DATA":
+			c.Cmd("354 End data with <CR><LF>.<CR><LF>")
+			head, _ := c.ReadMIMEHeader()
+			data := ""
+		handleMsgData:
+			for {
+				s, _ := c.ReadLine()
+				switch s {
+				case ".":
+					break handleMsgData
+				default:
+					data = fmt.Sprintf("%s%s\n", data, s)
+					c.Cmd("250 Ok")
+				}
+
+			}
+			fs.MSGS <- msg{
+				Header: head,
+				Body:   data,
+			}
+		default:
+			// fmt.Println(s)
+			// TODO : MAIL FROM: and RCPT TO:
+			c.Cmd("250 Ok")
 		}
 	}
 }
