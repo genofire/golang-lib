@@ -12,6 +12,7 @@ import (
 func TestMetricsLoaded(t *testing.T) {
 	assert := assert.New(t)
 	s := webtest.New(assert)
+	defer s.Close()
 	assert.NotNil(s)
 
 	// GET

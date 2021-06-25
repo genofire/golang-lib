@@ -16,6 +16,7 @@ import (
 // @Failure 401 {object} web.HTTPError
 // @Failure 500 {object} web.HTTPError
 // @Router /api/v1/auth/status [get]
+// @Security ApiKeyAuth
 func init() {
 	web.ModuleRegister(func(r *gin.Engine, ws *web.Service) {
 		r.GET("/api/v1/auth/status", MiddlewareLogin(ws), func(c *gin.Context) {

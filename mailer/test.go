@@ -9,13 +9,16 @@ import (
 	"github.com/bdlm/log"
 )
 
+var defaultStartupPort = 12025
+
 type fakeServer struct {
-	s    *Service
-	l    net.Listener
-	MSGS chan msg
+	s     *Service
+	l     net.Listener
+	Mails chan *TestingMail
 }
 
-type msg struct {
+// TestingMail a mail in format from test server
+type TestingMail struct {
 	Header textproto.MIMEHeader
 	Body   string
 }
@@ -24,18 +27,20 @@ type msg struct {
 func NewFakeServer() (*fakeServer, *Service) {
 	s := &Service{
 		SMTPHost:     "127.0.0.1",
-		SMTPPort:     12025,
+		SMTPPort:     defaultStartupPort,
 		SMTPUsername: "user",
 		SMTPPassword: "password",
 		SMTPSSL:      false,
+		From:         "golang-lib@example.org",
 	}
+	defaultStartupPort++
 	return newFakeServer(s)
 }
 
 func newFakeServer(s *Service) (*fakeServer, *Service) {
 	fs := &fakeServer{
-		s:    s,
-		MSGS: make(chan msg),
+		s:     s,
+		Mails: make(chan *TestingMail),
 	}
 	l, err := net.Listen("tcp", fmt.Sprintf("%s:%d", fs.s.SMTPHost, fs.s.SMTPPort))
 	if err != nil {
@@ -107,7 +112,7 @@ func (fs *fakeServer) handle(conn net.Conn) {
 				}
 
 			}
-			fs.MSGS <- msg{
+			fs.Mails <- &TestingMail{
 				Header: head,
 				Body:   data,
 			}

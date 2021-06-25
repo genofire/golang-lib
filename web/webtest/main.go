@@ -13,6 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"dev.sum7.eu/genofire/golang-lib/database"
+	"dev.sum7.eu/genofire/golang-lib/mailer"
 	"dev.sum7.eu/genofire/golang-lib/web"
 )
 
@@ -23,6 +24,8 @@ var (
 
 type testServer struct {
 	DB          *database.Database
+	Mails       chan *mailer.TestingMail
+	Close       func()
 	gin         *gin.Engine
 	ws          *web.Service
 	assert      *assert.Assertions
@@ -55,8 +58,14 @@ func New(assert *assert.Assertions) *testServer {
 	gin.EnableJsonDecoderDisallowUnknownFields()
 	gin.SetMode(gin.TestMode)
 
+	mock, mail := mailer.NewFakeServer()
+
+	err = mail.Setup()
+	assert.Nil(err)
+
 	ws := &web.Service{
-		DB: dbConfig.DB,
+		DB:     dbConfig.DB,
+		Mailer: mail,
 	}
 	ws.Session.Name = "mysession"
 	ws.Session.Secret = "hidden"
@@ -66,6 +75,8 @@ func New(assert *assert.Assertions) *testServer {
 	ws.Bind(r)
 	return &testServer{
 		DB:     &dbConfig,
+		Mails:  mock.Mails,
+		Close:  mock.Close,
 		gin:    r,
 		ws:     ws,
 		assert: assert,

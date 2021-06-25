@@ -13,6 +13,7 @@ import (
 func TestAPILogin(t *testing.T) {
 	assert := assert.New(t)
 	s := webtest.New(assert)
+	defer s.Close()
 	assert.NotNil(s)
 	SetupMigration(s.DB)
 	s.DB.MigrateTestdata()
