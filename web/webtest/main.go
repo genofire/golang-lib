@@ -90,19 +90,23 @@ func (s *testServer) DatabaseForget() {
 }
 
 // Request sends a request to webtest WebService
-func (s *testServer) Request(method, url string, body interface{}, expectCode int, jsonObj interface{}) {
+func (s *testServer) Request(method, url string, body interface{}, expectCode int, jsonObj interface{}) error {
 	var jsonBody io.Reader
 	if body != nil {
 		if strBody, ok := body.(string); ok {
 			jsonBody = strings.NewReader(strBody)
 		} else {
 			jsonBodyArray, err := json.Marshal(body)
-			s.assert.Nil(err, "no request created")
+			if err != nil {
+				return err
+			}
 			jsonBody = bytes.NewBuffer(jsonBodyArray)
 		}
 	}
 	req, err := http.NewRequest(method, url, jsonBody)
-	s.assert.Nil(err, "no request created")
+	if err != nil {
+		return err
+	}
 	if len(s.lastCookies) > 0 {
 		for _, c := range s.lastCookies {
 			req.AddCookie(c)
@@ -114,14 +118,15 @@ func (s *testServer) Request(method, url string, body interface{}, expectCode in
 	// valid statusCode
 	s.assert.Equal(expectCode, w.Code, "expected http status code")
 	if expectCode != w.Code {
-		fmt.Printf("wrong status code, body:%v\n", w.Body)
-		return
+		return fmt.Errorf("wrong status code, body: %v", w.Body)
 	}
 
 	if jsonObj != nil {
 		// fetch JSON
 		err = json.NewDecoder(w.Body).Decode(jsonObj)
-		s.assert.Nil(err, "decode json")
+		if err != nil {
+			return err
+		}
 	}
 
 	result := w.Result()
@@ -131,17 +136,18 @@ func (s *testServer) Request(method, url string, body interface{}, expectCode in
 			s.lastCookies = cookies
 		}
 	}
+	return nil
 }
 
 // Login to API by send request
-func (s *testServer) Login(login Login) {
+func (s *testServer) Login(login Login) error {
 	// POST: correct login
-	s.Request(http.MethodPost, "/api/v1/auth/login", &login, http.StatusOK, nil)
+	return s.Request(http.MethodPost, "/api/v1/auth/login", &login, http.StatusOK, nil)
 }
 
 // TestLogin to API by default login data
-func (s *testServer) TestLogin() {
-	s.Login(Login{
+func (s *testServer) TestLogin() error {
+	return s.Login(Login{
 		Username: "admin",
 		Password: "CHANGEME",
 	})

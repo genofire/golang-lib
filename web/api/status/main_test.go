@@ -17,7 +17,8 @@ func TestAPIStatus(t *testing.T) {
 
 	obj := Status{}
 	// GET
-	s.Request(http.MethodGet, "/api/status", nil, http.StatusOK, &obj)
+	err := s.Request(http.MethodGet, "/api/status", nil, http.StatusOK, &obj)
+	assert.NoError(err)
 	assert.Equal(VERSION, obj.Version)
 	assert.Equal(EXTRAS, obj.Extras)
 	assert.True(obj.Up)
@@ -26,7 +27,8 @@ func TestAPIStatus(t *testing.T) {
 
 	obj = Status{}
 	// GET - failed status
-	s.Request(http.MethodGet, "/api/status", nil, http.StatusInternalServerError, &obj)
+	err = s.Request(http.MethodGet, "/api/status", nil, http.StatusInternalServerError, &obj)
+	assert.NoError(err)
 	assert.Equal(VERSION, obj.Version)
 	assert.Equal(EXTRAS, obj.Extras)
 	assert.False(obj.Up)

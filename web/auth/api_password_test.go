@@ -23,23 +23,28 @@ func TestAPIPassword(t *testing.T) {
 
 	hErr := web.HTTPError{}
 	// no auth
-	s.Request(http.MethodPost, "/api/v1/my/auth/password", &passwordNew, http.StatusUnauthorized, &hErr)
+	err := s.Request(http.MethodPost, "/api/v1/my/auth/password", &passwordNew, http.StatusUnauthorized, &hErr)
+	assert.NoError(err)
 	assert.Equal(APIErrorNoSession, hErr.Message)
 
-	s.TestLogin()
+	err = s.TestLogin()
+	assert.NoError(err)
 
 	hErr = web.HTTPError{}
 	// invalid
-	s.Request(http.MethodPost, "/api/v1/my/auth/password", nil, http.StatusBadRequest, &hErr)
+	err = s.Request(http.MethodPost, "/api/v1/my/auth/password", nil, http.StatusBadRequest, &hErr)
+	assert.NoError(err)
 	assert.Equal(web.APIErrorInvalidRequestFormat, hErr.Message)
 
 	res := false
 	// set new password
-	s.Request(http.MethodPost, "/api/v1/my/auth/password", &passwordNew, http.StatusOK, &res)
+	err = s.Request(http.MethodPost, "/api/v1/my/auth/password", &passwordNew, http.StatusOK, &res)
+	assert.NoError(err)
 	assert.True(res)
 
 	res = false
 	// set old password
-	s.Request(http.MethodPost, "/api/v1/my/auth/password", &passwordCurrent, http.StatusOK, &res)
+	err = s.Request(http.MethodPost, "/api/v1/my/auth/password", &passwordCurrent, http.StatusOK, &res)
+	assert.NoError(err)
 	assert.True(res)
 }

@@ -16,10 +16,12 @@ func TestMetricsLoaded(t *testing.T) {
 	assert.NotNil(s)
 
 	// GET
-	s.Request(http.MethodGet, "/metrics", nil, http.StatusOK, nil)
+	err := s.Request(http.MethodGet, "/metrics", nil, http.StatusOK, nil)
+	assert.NoError(err)
 
 	UP = func() bool { return false }
 
 	// GET
-	s.Request(http.MethodGet, "/metrics", nil, http.StatusOK, nil)
+	err = s.Request(http.MethodGet, "/metrics", nil, http.StatusOK, nil)
+	assert.NoError(err)
 }

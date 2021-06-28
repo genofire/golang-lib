@@ -27,23 +27,26 @@ func TestAPIPasswordCode(t *testing.T) {
 
 	hErr := web.HTTPError{}
 	// invalid
-	s.Request(http.MethodPost, "/api/v1/auth/password/code", &passwordNew, http.StatusBadRequest, &hErr)
+	err := s.Request(http.MethodPost, "/api/v1/auth/password/code", &passwordNew, http.StatusBadRequest, &hErr)
+	assert.NoError(err)
 	assert.Equal(web.APIErrorInvalidRequestFormat, hErr.Message)
 
 	res := ""
 	// set new password
-	s.Request(http.MethodPost, "/api/v1/auth/password/code", &PasswordWithForgetCode{
+	err = s.Request(http.MethodPost, "/api/v1/auth/password/code", &PasswordWithForgetCode{
 		ForgetCode: forgetCode,
 		Password:   passwordNew,
 	}, http.StatusOK, &res)
+	assert.NoError(err)
 	assert.Equal("admin", res)
 
 	hErr = web.HTTPError{}
 	// set password without code
-	s.Request(http.MethodPost, "/api/v1/auth/password/code", &PasswordWithForgetCode{
+	err = s.Request(http.MethodPost, "/api/v1/auth/password/code", &PasswordWithForgetCode{
 		ForgetCode: forgetCode,
 		Password:   passwordCurrent,
 	}, http.StatusBadRequest, &hErr)
+	assert.NoError(err)
 	assert.Equal(APIErrorUserNotFound, hErr.Message)
 
 	forgetCode = uuid.New()
@@ -51,9 +54,10 @@ func TestAPIPasswordCode(t *testing.T) {
 
 	res = ""
 	// set old password
-	s.Request(http.MethodPost, "/api/v1/auth/password/code", &PasswordWithForgetCode{
+	err = s.Request(http.MethodPost, "/api/v1/auth/password/code", &PasswordWithForgetCode{
 		ForgetCode: forgetCode,
 		Password:   passwordCurrent,
 	}, http.StatusOK, &res)
+	assert.NoError(err)
 	assert.Equal("admin", res)
 }

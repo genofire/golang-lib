@@ -20,14 +20,17 @@ func TestAPIStatus(t *testing.T) {
 
 	hErr := web.HTTPError{}
 	// invalid
-	s.Request(http.MethodGet, "/api/v1/auth/status", nil, http.StatusUnauthorized, &hErr)
+	err := s.Request(http.MethodGet, "/api/v1/auth/status", nil, http.StatusUnauthorized, &hErr)
+	assert.NoError(err)
 	assert.Equal(APIErrorNoSession, hErr.Message)
 
-	s.TestLogin()
+	err = s.TestLogin()
+	assert.NoError(err)
 
 	obj := User{}
 	// invalid - user
-	s.Request(http.MethodGet, "/api/v1/auth/status", nil, http.StatusOK, &obj)
+	err = s.Request(http.MethodGet, "/api/v1/auth/status", nil, http.StatusOK, &obj)
+	assert.NoError(err)
 	assert.Equal("admin", obj.Username)
 
 }
