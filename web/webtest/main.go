@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/assert"
 
 	"dev.sum7.eu/genofire/golang-lib/database"
 	"dev.sum7.eu/genofire/golang-lib/mailer"
@@ -28,7 +27,6 @@ type testServer struct {
 	Close       func()
 	gin         *gin.Engine
 	ws          *web.Service
-	assert      *assert.Assertions
 	lastCookies []*http.Cookie
 }
 
@@ -39,7 +37,7 @@ type Login struct {
 }
 
 // New starts WebService for testing
-func New(assert *assert.Assertions) *testServer {
+func New() (*testServer, error) {
 	// db setup
 	dbConfig := database.Database{
 		Connection: DBConnection,
@@ -49,10 +47,11 @@ func New(assert *assert.Assertions) *testServer {
 	}
 	err := dbConfig.Run()
 	if err != nil && err != database.ErrNothingToMigrate {
-		fmt.Println(err.Error())
-		assert.Nil(err)
+		return nil, err
 	}
-	assert.NotNil(dbConfig.DB)
+	if dbConfig.DB == nil {
+		return nil, database.ErrNotConnected
+	}
 
 	// api setup
 	gin.EnableJsonDecoderDisallowUnknownFields()
@@ -61,7 +60,9 @@ func New(assert *assert.Assertions) *testServer {
 	mock, mail := mailer.NewFakeServer()
 
 	err = mail.Setup()
-	assert.Nil(err)
+	if err != nil {
+		return nil, err
+	}
 
 	ws := &web.Service{
 		DB:     dbConfig.DB,
@@ -74,13 +75,12 @@ func New(assert *assert.Assertions) *testServer {
 	ws.LoadSession(r)
 	ws.Bind(r)
 	return &testServer{
-		DB:     &dbConfig,
-		Mails:  mock.Mails,
-		Close:  mock.Close,
-		gin:    r,
-		ws:     ws,
-		assert: assert,
-	}
+		DB:    &dbConfig,
+		Mails: mock.Mails,
+		Close: mock.Close,
+		gin:   r,
+		ws:    ws,
+	}, nil
 }
 
 // DatabaseForget, to run a test without a database
@@ -116,7 +116,6 @@ func (s *testServer) Request(method, url string, body interface{}, expectCode in
 	s.gin.ServeHTTP(w, req)
 
 	// valid statusCode
-	s.assert.Equal(expectCode, w.Code, "expected http status code")
 	if expectCode != w.Code {
 		return fmt.Errorf("wrong status code, body: %v", w.Body)
 	}

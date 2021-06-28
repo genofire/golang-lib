@@ -12,7 +12,8 @@ import (
 
 func TestAPIPassword(t *testing.T) {
 	assert := assert.New(t)
-	s := webtest.New(assert)
+	s, err := webtest.New()
+	assert.NoError(err)
 	defer s.Close()
 	assert.NotNil(s)
 	SetupMigration(s.DB)
@@ -23,7 +24,7 @@ func TestAPIPassword(t *testing.T) {
 
 	hErr := web.HTTPError{}
 	// no auth
-	err := s.Request(http.MethodPost, "/api/v1/my/auth/password", &passwordNew, http.StatusUnauthorized, &hErr)
+	err = s.Request(http.MethodPost, "/api/v1/my/auth/password", &passwordNew, http.StatusUnauthorized, &hErr)
 	assert.NoError(err)
 	assert.Equal(APIErrorNoSession, hErr.Message)
 

@@ -11,12 +11,13 @@ import (
 
 func TestMetricsLoaded(t *testing.T) {
 	assert := assert.New(t)
-	s := webtest.New(assert)
+	s, err := webtest.New()
+	assert.NoError(err)
 	defer s.Close()
 	assert.NotNil(s)
 
 	// GET
-	err := s.Request(http.MethodGet, "/metrics", nil, http.StatusOK, nil)
+	err = s.Request(http.MethodGet, "/metrics", nil, http.StatusOK, nil)
 	assert.NoError(err)
 
 	UP = func() bool { return false }

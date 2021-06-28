@@ -13,7 +13,8 @@ import (
 
 func TestAPIPasswordCode(t *testing.T) {
 	assert := assert.New(t)
-	s := webtest.New(assert)
+	s, err := webtest.New()
+	assert.NoError(err)
 	defer s.Close()
 	assert.NotNil(s)
 	SetupMigration(s.DB)
@@ -27,7 +28,7 @@ func TestAPIPasswordCode(t *testing.T) {
 
 	hErr := web.HTTPError{}
 	// invalid
-	err := s.Request(http.MethodPost, "/api/v1/auth/password/code", &passwordNew, http.StatusBadRequest, &hErr)
+	err = s.Request(http.MethodPost, "/api/v1/auth/password/code", &passwordNew, http.StatusBadRequest, &hErr)
 	assert.NoError(err)
 	assert.Equal(web.APIErrorInvalidRequestFormat, hErr.Message)
 

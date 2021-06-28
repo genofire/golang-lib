@@ -11,13 +11,14 @@ import (
 
 func TestAPIStatus(t *testing.T) {
 	assert := assert.New(t)
-	s := webtest.New(assert)
+	s, err := webtest.New()
+	assert.NoError(err)
 	defer s.Close()
 	assert.NotNil(s)
 
 	obj := Status{}
 	// GET
-	err := s.Request(http.MethodGet, "/api/status", nil, http.StatusOK, &obj)
+	err = s.Request(http.MethodGet, "/api/status", nil, http.StatusOK, &obj)
 	assert.NoError(err)
 	assert.Equal(VERSION, obj.Version)
 	assert.Equal(EXTRAS, obj.Extras)
