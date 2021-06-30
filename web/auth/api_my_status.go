@@ -16,11 +16,11 @@ import (
 // @Success 200 {object} User
 // @Failure 401 {object} web.HTTPError
 // @Failure 500 {object} web.HTTPError
-// @Router /api/v1/auth/status [get]
+// @Router /api/v1/my/auth/status [get]
 // @Security ApiKeyAuth
 func init() {
 	web.ModuleRegister(func(r *gin.Engine, ws *web.Service) {
-		r.GET("/api/v1/auth/status", MiddlewareLogin(ws), func(c *gin.Context) {
+		r.GET("/api/v1/my/auth/status", MiddlewareLogin(ws), func(c *gin.Context) {
 			d, ok := GetCurrentUser(c, ws)
 			if ok {
 				c.JSON(http.StatusOK, d)
