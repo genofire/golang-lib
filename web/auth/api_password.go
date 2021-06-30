@@ -10,6 +10,7 @@ import (
 
 // @Summary Change Password
 // @Description Change Password of current login user
+// @Tags auth
 // @Accept json
 // @Produce  json
 // @Success 200 {object} boolean "if password was saved (e.g. `true`)"

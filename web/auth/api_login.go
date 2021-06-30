@@ -18,6 +18,7 @@ type login struct {
 
 // @Summary Login
 // @Description Login by username and password, you will get a cookie of current session
+// @Tags auth
 // @Accept json
 // @Produce  json
 // @Success 200 {object} User

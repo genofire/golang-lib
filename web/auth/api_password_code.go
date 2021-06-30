@@ -19,6 +19,7 @@ type PasswordWithForgetCode struct {
 
 // @Summary Change Password with ForgetCode
 // @Description Change Password of any user by generated forget code
+// @Tags auth
 // @Accept json
 // @Produce  json
 // @Success 200 {object} string "username of changed password (e.g. `"admin"`)"

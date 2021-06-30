@@ -28,6 +28,7 @@ type Status struct {
 
 // @Summary Show Status of current API
 // @Description Show version and status
+// @Tags status
 // @Produce  json
 // @Success 200 {object} Status
 // @Failure 400 {object} web.HTTPError

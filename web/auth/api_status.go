@@ -10,6 +10,7 @@ import (
 
 // @Summary Login status
 // @Description show user_id and username if logged in
+// @Tags auth
 // @Accept json
 // @Produce  json
 // @Success 200 {object} User
