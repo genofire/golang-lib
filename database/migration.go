@@ -3,7 +3,6 @@ package database
 import (
 	"sort"
 
-	"github.com/bdlm/log"
 	gormigrate "github.com/go-gormigrate/gormigrate/v2"
 )
 
@@ -23,6 +22,24 @@ func (config *Database) sortedMigration(testdata bool) []*gormigrate.Migration {
 	return migrations
 }
 
+func (config *Database) setupMigrator(testdata bool) (*gormigrate.Gormigrate, error) {
+	migrations := config.sortedMigration(testdata)
+	if len(migrations) == 0 {
+		return nil, ErrNothingToMigrate
+	}
+
+	return gormigrate.New(config.DB, gormigrate.DefaultOptions, migrations), nil
+
+}
+
+func (config *Database) migrate(testdata bool) error {
+	m, err := config.setupMigrator(testdata)
+	if err != nil {
+		return err
+	}
+	return m.Migrate()
+}
+
 // Migrate run migration
 func (config *Database) Migrate() error {
 	return config.migrate(false)
@@ -31,16 +48,6 @@ func (config *Database) Migrate() error {
 // MigrateTestdata run migration and testdata migration
 func (config *Database) MigrateTestdata() error {
 	return config.migrate(true)
-}
-func (config *Database) migrate(testdata bool) error {
-	migrations := config.sortedMigration(testdata)
-	if len(migrations) == 0 {
-		return ErrNothingToMigrate
-	}
-
-	m := gormigrate.New(config.DB, gormigrate.DefaultOptions, migrations)
-
-	return m.Migrate()
 }
 
 // AddMigration add to database config migration step
@@ -69,9 +76,32 @@ func (config *Database) addMigrate(testdata bool, m ...*gormigrate.Migration) {
 	}
 }
 
-// ReRun Rollback und run every migration step again till id
-func (config *Database) ReRun(id string) {
+// Rollback all migrations steps
+func (config *Database) Rollback() error {
+	m, err := config.setupMigrator(true)
+	if err != nil {
+		return err
+	}
+
+	for {
+		err = m.RollbackLast()
+		if err != nil {
+			if err == gormigrate.ErrNoRunMigration {
+				return nil
+			}
+			return err
+		}
+	}
+}
+
+// ReMigrate Rollback und run every migration step again till id
+func (config *Database) ReMigrate(id string) error {
 	migrations := config.sortedMigration(true)
+	m, err := config.setupMigrator(true)
+	if err != nil {
+		return err
+	}
+
 	x := 0
 	for _, m := range migrations {
 		if m.ID == id {
@@ -79,20 +109,13 @@ func (config *Database) ReRun(id string) {
 		}
 		x = x + 1
 	}
+	// TODO not found
 
 	for i := len(migrations) - 1; i >= x; i = i - 1 {
-		m := migrations[i]
-		log.Warnf("rollback %s", m.ID)
-		err := m.Rollback(config.DB)
-		if err != nil {
-			log.Errorf("rollback %s", err)
+		mStep := migrations[i]
+		if err := m.RollbackTo(mStep.ID); err != nil {
+			return err
 		}
 	}
-	for _, m := range migrations {
-		log.Warnf("run %s", m.ID)
-		err := m.Migrate(config.DB)
-		if err != nil {
-			log.Errorf("run %s", err)
-		}
-	}
+	return m.Migrate()
 }

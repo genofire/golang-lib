@@ -38,6 +38,11 @@ type Login struct {
 
 // New starts WebService for testing
 func New() (*testServer, error) {
+	return NewWithDBSetup(nil)
+}
+
+// NewWithDBSetup allows to reconfigure before ReRun the database - e.g. for adding Migration-Steps
+func NewWithDBSetup(dbCall func(db *database.Database)) (*testServer, error) {
 	// db setup
 	dbConfig := database.Database{
 		Connection: DBConnection,
@@ -45,7 +50,10 @@ func New() (*testServer, error) {
 		Debug:      false,
 		LogLevel:   0,
 	}
-	err := dbConfig.Run()
+	if dbCall != nil {
+		dbCall(&dbConfig)
+	}
+	err := dbConfig.ReRun()
 	if err != nil && err != database.ErrNothingToMigrate {
 		return nil, err
 	}

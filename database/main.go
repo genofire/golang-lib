@@ -20,6 +20,24 @@ type Database struct {
 
 // Run database config - connect and migrate
 func (config *Database) Run() error {
+	if err := config.run(); err != nil {
+		return err
+	}
+	return config.migrate(config.Testdata)
+}
+
+// ReRun database config - connect and  re migration
+func (config *Database) ReRun() error {
+	if err := config.run(); err != nil {
+		return err
+	}
+	if err := config.Rollback(); err != nil {
+		return err
+	}
+	return config.migrate(config.Testdata)
+}
+
+func (config *Database) run() error {
 	db, err := gorm.Open(postgres.Open(config.Connection), &gorm.Config{
 		Logger: logger.Default.LogMode(config.LogLevel),
 	})
@@ -32,9 +50,6 @@ func (config *Database) Run() error {
 	}
 
 	config.DB = db
-	if err = config.migrate(config.Testdata); err != nil {
-		return err
-	}
 	return nil
 }
 

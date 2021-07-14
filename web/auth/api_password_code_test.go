@@ -13,12 +13,10 @@ import (
 
 func TestAPIPasswordCode(t *testing.T) {
 	assert := assert.New(t)
-	s, err := webtest.New()
+	s, err := webtest.NewWithDBSetup(SetupMigration)
 	assert.NoError(err)
 	defer s.Close()
 	assert.NotNil(s)
-	SetupMigration(s.DB)
-	s.DB.MigrateTestdata()
 
 	forgetCode := uuid.New()
 	passwordCurrent := "CHANGEME"

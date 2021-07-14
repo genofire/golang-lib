@@ -12,12 +12,10 @@ import (
 
 func TestAPIDeleteMyProfil(t *testing.T) {
 	assert := assert.New(t)
-	s, err := webtest.New()
+	s, err := webtest.NewWithDBSetup(SetupMigration)
 	assert.NoError(err)
 	defer s.Close()
 	assert.NotNil(s)
-	SetupMigration(s.DB)
-	s.DB.MigrateTestdata()
 
 	hErr := web.HTTPError{}
 	// invalid
@@ -37,5 +35,5 @@ func TestAPIDeleteMyProfil(t *testing.T) {
 	assert.NoError(err)
 	assert.True(true)
 
-	s.DB.ReRun("10-data-0008-01-user")
+	s.DB.ReMigrate("10-data-0008-01-user")
 }
