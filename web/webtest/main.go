@@ -21,6 +21,12 @@ var (
 	DBConnection = "user=root password=root dbname=defaultdb host=localhost port=26257 sslmode=disable"
 )
 
+// Option to configure TestServer
+type Option struct {
+	ReRun   bool
+	DBSetup func(db *database.Database)
+}
+
 type testServer struct {
 	DB          *database.Database
 	Mails       chan *mailer.TestingMail
@@ -38,11 +44,16 @@ type Login struct {
 
 // New starts WebService for testing
 func New() (*testServer, error) {
-	return NewWithDBSetup(nil)
+	return NewWithOption(Option{})
 }
 
 // NewWithDBSetup allows to reconfigure before ReRun the database - e.g. for adding Migration-Steps
 func NewWithDBSetup(dbCall func(db *database.Database)) (*testServer, error) {
+	return NewWithOption(Option{ReRun: true, DBSetup: dbCall})
+}
+
+// NewWithOption allows to configure WebService for testing
+func NewWithOption(option Option) (*testServer, error) {
 	// db setup
 	dbConfig := database.Database{
 		Connection: DBConnection,
@@ -50,10 +61,15 @@ func NewWithDBSetup(dbCall func(db *database.Database)) (*testServer, error) {
 		Debug:      false,
 		LogLevel:   0,
 	}
-	if dbCall != nil {
-		dbCall(&dbConfig)
+	if option.DBSetup != nil {
+		option.DBSetup(&dbConfig)
 	}
-	err := dbConfig.ReRun()
+	var err error
+	if option.ReRun {
+		err = dbConfig.ReRun()
+	} else {
+		err = dbConfig.Run()
+	}
 	if err != nil && err != database.ErrNothingToMigrate {
 		return nil, err
 	}
