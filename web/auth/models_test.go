@@ -3,7 +3,7 @@ package auth
 import (
 	"testing"
 
-	gormigrate "github.com/go-gormigrate/gormigrate/v2"
+	gormigrate "github.com/genofire/gormigrate/v2"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 

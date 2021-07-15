@@ -3,7 +3,7 @@ package database
 import (
 	"sort"
 
-	gormigrate "github.com/go-gormigrate/gormigrate/v2"
+	gormigrate "github.com/genofire/gormigrate/v2"
 )
 
 func (config *Database) sortedMigration(testdata bool) []*gormigrate.Migration {
@@ -72,24 +72,6 @@ func (config *Database) addMigrate(testdata bool, m ...*gormigrate.Migration) {
 			config.migrations[i.ID] = i
 		} else {
 			config.migrationTestdata[i.ID] = i
-		}
-	}
-}
-
-// Rollback all migrations steps
-func (config *Database) Rollback() error {
-	m, err := config.setupMigrator(true)
-	if err != nil {
-		return err
-	}
-
-	for {
-		err = m.RollbackLast()
-		if err != nil {
-			if err == gormigrate.ErrNoRunMigration {
-				return nil
-			}
-			return err
 		}
 	}
 }

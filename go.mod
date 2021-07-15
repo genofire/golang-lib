@@ -6,6 +6,7 @@ require (
 	github.com/bdlm/log v0.1.20
 	github.com/bdlm/std v1.0.1 // indirect
 	github.com/chenjiandongx/ginprom v0.0.0-20201217063207-fe11b7f55a35
+	github.com/genofire/gormigrate/v2 v2.0.1-0.20210715085530-7373801d0902 // indirect
 	github.com/gin-contrib/sessions v0.0.3
 	github.com/gin-contrib/static v0.0.1
 	github.com/gin-gonic/autotls v0.0.3
@@ -24,7 +25,7 @@ require (
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/mail.v2 v2.3.1 // indirect
 	gorm.io/driver/postgres v1.1.0
-	gorm.io/gorm v1.21.10
+	gorm.io/gorm v1.21.12
 	gorm.io/plugin/prometheus v0.0.0-20210507023802-dc84a49b85d1
 	nhooyr.io/websocket v1.8.7
 )

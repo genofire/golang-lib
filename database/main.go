@@ -1,7 +1,7 @@
 package database
 
 import (
-	gormigrate "github.com/go-gormigrate/gormigrate/v2"
+	gormigrate "github.com/genofire/gormigrate/v2"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -31,7 +31,11 @@ func (config *Database) ReRun() error {
 	if err := config.run(); err != nil {
 		return err
 	}
-	if err := config.Rollback(); err != nil {
+	m, err := config.setupMigrator(true)
+	if err != nil {
+		return err
+	}
+	if err := m.RollbackAll(); err != nil {
 		return err
 	}
 	return config.migrate(config.Testdata)
