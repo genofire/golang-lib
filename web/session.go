@@ -6,8 +6,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// LoadSession module to start Session Handling in WebService
-func (config *Service) LoadSession(r *gin.Engine) {
-	store := cookie.NewStore([]byte(config.Session.Secret))
-	r.Use(sessions.Sessions(config.Session.Name, store))
+// LoadSessions starts session handling for s.
+func (s *Service) LoadSession(r *gin.Engine) {
+	store := cookie.NewStore([]byte(s.Session.Secret))
+	r.Use(sessions.Sessions(s.Session.Name, store))
 }

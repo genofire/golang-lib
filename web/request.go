@@ -6,9 +6,11 @@ import (
 	"time"
 )
 
-// JSONRequest easy get request for json
+// JSONRequest issues a GET request to the specified URL and reads the returned
+// JSON into value. See json.Unmarshal for the rules for converting JSON into a
+// value.
 func JSONRequest(url string, value interface{}) error {
-	var netClient = &http.Client{
+	netClient := &http.Client{
 		Timeout: time.Second * 20,
 	}
 
@@ -18,6 +20,7 @@ func JSONRequest(url string, value interface{}) error {
 	}
 
 	err = json.NewDecoder(resp.Body).Decode(&value)
+	resp.Body.Close()
 	if err != nil {
 		return err
 	}

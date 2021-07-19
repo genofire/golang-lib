@@ -1,3 +1,12 @@
+/*
+Package web implements common functionality for web APIs using Gin and Gorm.
+
+Modules
+
+Modules provide functionality for a web server. A module is a function executed
+before starting a server, accessing the Service and the Gin Engine. Each Service
+maintains a list of modules. When it runs, it executes all of its modules.
+*/
 package web
 
 import (
@@ -13,8 +22,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// Service to store Configuration and Webserver wide objects
-// (like DB Connection)
+// A Service stores configuration of a server.
 type Service struct {
 	// config
 	Listen    string `toml:"listen"`
@@ -36,32 +44,32 @@ type Service struct {
 	modules []ModuleRegisterFunc
 }
 
-// Run to startup all related web parts
-// (e.g. configure the server, metrics, and finally bind routing)
-func (config *Service) Run() error {
+// Run creates, configures, and runs a new gin.Engine using its registered
+// modules.
+func (s *Service) Run() error {
 	gin.EnableJsonDecoderDisallowUnknownFields()
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
 	// catch crashed
 	r.Use(gin.Recovery())
 
-	if config.AccessLog {
+	if s.AccessLog {
 		r.Use(gin.Logger())
 		log.Debug("request logging enabled")
 	}
-	config.LoadSession(r)
-	config.Bind(r)
+	s.LoadSession(r)
+	s.Bind(r)
 
-	if config.ACME.Enable {
-		if config.Listen != "" {
+	if s.ACME.Enable {
+		if s.Listen != "" {
 			log.Panic("For ACME / Let's Encrypt it is not possible to set `listen`")
 		}
 		m := autocert.Manager{
 			Prompt:     autocert.AcceptTOS,
-			HostPolicy: autocert.HostWhitelist(config.ACME.Domains...),
-			Cache:      autocert.DirCache(config.ACME.Cache),
+			HostPolicy: autocert.HostWhitelist(s.ACME.Domains...),
+			Cache:      autocert.DirCache(s.ACME.Cache),
 		}
 		return autotls.RunWithManager(r, &m)
 	}
-	return r.Run(config.Listen)
+	return r.Run(s.Listen)
 }

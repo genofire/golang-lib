@@ -5,19 +5,21 @@ import (
 )
 
 const (
-	// ContentTypeJSON content type of json
 	ContentTypeJSON = "application/json"
-	// ContentTypeJS content type of javascript
-	ContentTypeJS = "application/javascript"
-	// ContentTypeXML content type of xml
-	ContentTypeXML = "text/xml"
-	// ContentTypeYAML content type of yaml
+	ContentTypeJS   = "application/javascript"
+	ContentTypeXML  = "text/xml"
 	ContentTypeYAML = "text/yaml"
-	// ContentTypeHTML content type of html
 	ContentTypeHTML = "text/html"
 )
 
-// Response give
+// Response sends an HTTP response.
+//
+// statusCode is the respone's status.
+//
+// If the request's Content-Type is JavaScript, JSON, YAML, or XML, it returns
+// data serialized as JSONP, JSON, YAML, or XML, respectively. If the
+// Content-Type is HTML, it returns the HTML template templateName rendered with
+// data.
 func Response(ctx *gin.Context, statusCode int, data interface{}, templateName string) {
 	switch ctx.ContentType() {
 	case ContentTypeJS:
