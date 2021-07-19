@@ -14,10 +14,8 @@ var (
 func TestRun(t *testing.T) {
 	assert := assert.New(t)
 
-	ModuleRegister(func(_ *gin.Engine, _ *Service) {
-	})
-
 	s := &Service{AccessLog: true, Listen: "8.8.8.8:80"}
+	s.ModuleRegister(func(_ *gin.Engine, _ *Service) {})
 	// HTTP - failed
 	err := s.Run()
 	assert.Error(err)

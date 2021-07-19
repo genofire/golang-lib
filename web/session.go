@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// LoadSessions starts session handling for s.
+// LoadSession starts session handling for s.
 func (s *Service) LoadSession(r *gin.Engine) {
 	store := cookie.NewStore([]byte(s.Session.Secret))
 	r.Use(sessions.Sessions(s.Session.Name, store))

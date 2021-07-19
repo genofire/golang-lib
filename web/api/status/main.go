@@ -26,6 +26,7 @@ type Status struct {
 	Extras  interface{} `json:"extras,omitempty"`
 }
 
+// Register status module
 // @Summary Show Status of current API
 // @Description Show version and status
 // @Tags status
