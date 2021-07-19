@@ -27,51 +27,49 @@ type login struct {
 // @Failure 500 {object} web.HTTPError
 // @Router /api/v1/auth/login [post]
 // @Param body body login false "login"
-func init() {
-	web.ModuleRegister(func(r *gin.Engine, ws *web.Service) {
-		r.POST("/api/v1/auth/login", func(c *gin.Context) {
-			var data login
-			if err := c.BindJSON(&data); err != nil {
-				c.JSON(http.StatusBadRequest, web.HTTPError{
-					Message: web.APIErrorInvalidRequestFormat,
-					Error:   err.Error(),
-				})
-				return
-			}
+func apiLogin(r *gin.Engine, ws *web.Service) {
+	r.POST("/api/v1/auth/login", func(c *gin.Context) {
+		var data login
+		if err := c.BindJSON(&data); err != nil {
+			c.JSON(http.StatusBadRequest, web.HTTPError{
+				Message: web.APIErrorInvalidRequestFormat,
+				Error:   err.Error(),
+			})
+			return
+		}
 
-			d := &User{}
-			if err := ws.DB.Where(map[string]interface{}{"username": data.Username}).First(d).Error; err != nil {
-				if errors.Is(err, gorm.ErrRecordNotFound) {
-					c.JSON(http.StatusUnauthorized, web.HTTPError{
-						Message: APIErrorUserNotFound,
-						Error:   err.Error(),
-					})
-					return
-				}
-				c.JSON(http.StatusInternalServerError, web.HTTPError{
-					Message: web.APIErrorInternalDatabase,
-					Error:   err.Error(),
-				})
-				return
-			}
-			if !d.ValidatePassword(data.Password) {
+		d := &User{}
+		if err := ws.DB.Where(map[string]interface{}{"username": data.Username}).First(d).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
 				c.JSON(http.StatusUnauthorized, web.HTTPError{
-					Message: APIErrorIncorrectPassword,
-				})
-				return
-			}
-
-			session := sessions.Default(c)
-			session.Set("user_id", d.ID.String())
-			if err := session.Save(); err != nil {
-				c.JSON(http.StatusBadRequest, web.HTTPError{
-					Message: APIErrorCreateSession,
+					Message: APIErrorUserNotFound,
 					Error:   err.Error(),
 				})
 				return
 			}
+			c.JSON(http.StatusInternalServerError, web.HTTPError{
+				Message: web.APIErrorInternalDatabase,
+				Error:   err.Error(),
+			})
+			return
+		}
+		if !d.ValidatePassword(data.Password) {
+			c.JSON(http.StatusUnauthorized, web.HTTPError{
+				Message: APIErrorIncorrectPassword,
+			})
+			return
+		}
 
-			c.JSON(http.StatusOK, d)
-		})
+		session := sessions.Default(c)
+		session.Set("user_id", d.ID.String())
+		if err := session.Save(); err != nil {
+			c.JSON(http.StatusBadRequest, web.HTTPError{
+				Message: APIErrorCreateSession,
+				Error:   err.Error(),
+			})
+			return
+		}
+
+		c.JSON(http.StatusOK, d)
 	})
 }

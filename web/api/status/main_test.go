@@ -11,7 +11,7 @@ import (
 
 func TestAPIStatus(t *testing.T) {
 	assert := assert.New(t)
-	s, err := webtest.New()
+	s, err := webtest.New(Register)
 	assert.NoError(err)
 	defer s.Close()
 	assert.NotNil(s)

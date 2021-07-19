@@ -18,13 +18,11 @@ import (
 // @Failure 500 {object} web.HTTPError
 // @Router /api/v1/my/auth/status [get]
 // @Security ApiKeyAuth
-func init() {
-	web.ModuleRegister(func(r *gin.Engine, ws *web.Service) {
-		r.GET("/api/v1/my/auth/status", MiddlewareLogin(ws), func(c *gin.Context) {
-			d, ok := GetCurrentUser(c, ws)
-			if ok {
-				c.JSON(http.StatusOK, d)
-			}
-		})
+func apiMyStatus(r *gin.Engine, ws *web.Service) {
+	r.GET("/api/v1/my/auth/status", MiddlewareLogin(ws), func(c *gin.Context) {
+		d, ok := GetCurrentUser(c, ws)
+		if ok {
+			c.JSON(http.StatusOK, d)
+		}
 	})
 }

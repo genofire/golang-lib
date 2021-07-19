@@ -20,38 +20,36 @@ import (
 // @Router /api/v1/my/auth/password [post]
 // @Security ApiKeyAuth
 // @Param body body string false "new password"
-func init() {
-	web.ModuleRegister(func(r *gin.Engine, ws *web.Service) {
-		r.POST("/api/v1/my/auth/password", MiddlewareLogin(ws), func(c *gin.Context) {
-			d, ok := GetCurrentUser(c, ws)
-			if !ok {
-				return
-			}
-			var password string
-			if err := c.BindJSON(&password); err != nil {
-				c.JSON(http.StatusBadRequest, web.HTTPError{
-					Message: web.APIErrorInvalidRequestFormat,
-					Error:   err.Error(),
-				})
-				return
-			}
-			if err := d.SetPassword(password); err != nil {
-				c.JSON(http.StatusInternalServerError, web.HTTPError{
-					Message: APIErrroCreatePassword,
-					Error:   err.Error(),
-				})
-				return
-			}
+func apiMyPassword(r *gin.Engine, ws *web.Service) {
+	r.POST("/api/v1/my/auth/password", MiddlewareLogin(ws), func(c *gin.Context) {
+		d, ok := GetCurrentUser(c, ws)
+		if !ok {
+			return
+		}
+		var password string
+		if err := c.BindJSON(&password); err != nil {
+			c.JSON(http.StatusBadRequest, web.HTTPError{
+				Message: web.APIErrorInvalidRequestFormat,
+				Error:   err.Error(),
+			})
+			return
+		}
+		if err := d.SetPassword(password); err != nil {
+			c.JSON(http.StatusInternalServerError, web.HTTPError{
+				Message: APIErrroCreatePassword,
+				Error:   err.Error(),
+			})
+			return
+		}
 
-			if err := ws.DB.Save(&d).Error; err != nil {
-				c.JSON(http.StatusInternalServerError, web.HTTPError{
-					Message: web.APIErrorInternalDatabase,
-					Error:   err.Error(),
-				})
-				return
-			}
+		if err := ws.DB.Save(&d).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, web.HTTPError{
+				Message: web.APIErrorInternalDatabase,
+				Error:   err.Error(),
+			})
+			return
+		}
 
-			c.JSON(http.StatusOK, true)
-		})
+		c.JSON(http.StatusOK, true)
 	})
 }

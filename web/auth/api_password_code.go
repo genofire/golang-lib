@@ -28,49 +28,47 @@ type PasswordWithForgetCode struct {
 // @Failure 500 {object} web.HTTPError
 // @Router /api/v1/auth/password/code [post]
 // @Param body body PasswordWithForgetCode false "new password and forget code"
-func init() {
-	web.ModuleRegister(func(r *gin.Engine, ws *web.Service) {
-		r.POST("/api/v1/auth/password/code", func(c *gin.Context) {
-			var req PasswordWithForgetCode
-			if err := c.BindJSON(&req); err != nil {
+func apiPasswordCode(r *gin.Engine, ws *web.Service) {
+	r.POST("/api/v1/auth/password/code", func(c *gin.Context) {
+		var req PasswordWithForgetCode
+		if err := c.BindJSON(&req); err != nil {
+			c.JSON(http.StatusBadRequest, web.HTTPError{
+				Message: web.APIErrorInvalidRequestFormat,
+				Error:   err.Error(),
+			})
+			return
+		}
+		d := User{}
+		if err := ws.DB.Where("forget_code", req.ForgetCode).First(&d).Error; err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
 				c.JSON(http.StatusBadRequest, web.HTTPError{
-					Message: web.APIErrorInvalidRequestFormat,
+					Message: APIErrorUserNotFound,
 					Error:   err.Error(),
 				})
 				return
 			}
-			d := User{}
-			if err := ws.DB.Where("forget_code", req.ForgetCode).First(&d).Error; err != nil {
-				if errors.Is(err, gorm.ErrRecordNotFound) {
-					c.JSON(http.StatusBadRequest, web.HTTPError{
-						Message: APIErrorUserNotFound,
-						Error:   err.Error(),
-					})
-					return
-				}
-				c.JSON(http.StatusInternalServerError, web.HTTPError{
-					Message: APIErrroCreatePassword,
-					Error:   err.Error(),
-				})
-				return
-			}
-			if err := d.SetPassword(req.Password); err != nil {
-				c.JSON(http.StatusInternalServerError, web.HTTPError{
-					Message: APIErrroCreatePassword,
-					Error:   err.Error(),
-				})
-				return
-			}
-			d.ForgetCode = nil
+			c.JSON(http.StatusInternalServerError, web.HTTPError{
+				Message: APIErrroCreatePassword,
+				Error:   err.Error(),
+			})
+			return
+		}
+		if err := d.SetPassword(req.Password); err != nil {
+			c.JSON(http.StatusInternalServerError, web.HTTPError{
+				Message: APIErrroCreatePassword,
+				Error:   err.Error(),
+			})
+			return
+		}
+		d.ForgetCode = nil
 
-			if err := ws.DB.Save(&d).Error; err != nil {
-				c.JSON(http.StatusInternalServerError, web.HTTPError{
-					Message: web.APIErrorInternalDatabase,
-					Error:   err.Error(),
-				})
-				return
-			}
-			c.JSON(http.StatusOK, d.Username)
-		})
+		if err := ws.DB.Save(&d).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, web.HTTPError{
+				Message: web.APIErrorInternalDatabase,
+				Error:   err.Error(),
+			})
+			return
+		}
+		c.JSON(http.StatusOK, d.Username)
 	})
 }

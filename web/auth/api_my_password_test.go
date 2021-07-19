@@ -12,7 +12,7 @@ import (
 
 func TestAPIPassword(t *testing.T) {
 	assert := assert.New(t)
-	s, err := webtest.NewWithDBSetup(SetupMigration)
+	s, err := webtest.NewWithDBSetup(Register, SetupMigration)
 	assert.NoError(err)
 	defer s.Close()
 	assert.NotNil(s)

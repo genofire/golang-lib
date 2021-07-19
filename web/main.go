@@ -3,9 +3,11 @@ package web
 import (
 	"github.com/bdlm/log"
 	"github.com/gin-gonic/gin"
+
 	// acme
 	"github.com/gin-gonic/autotls"
 	"golang.org/x/crypto/acme/autocert"
+
 	// internal
 	"dev.sum7.eu/genofire/golang-lib/mailer"
 	"gorm.io/gorm"
@@ -30,6 +32,8 @@ type Service struct {
 	// internal
 	DB     *gorm.DB        `toml:"-"`
 	Mailer *mailer.Service `toml:"-"`
+
+	modules []ModuleRegisterFunc
 }
 
 // Run to startup all related web parts

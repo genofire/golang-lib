@@ -10,9 +10,9 @@ import (
 	"dev.sum7.eu/genofire/golang-lib/web/webtest"
 )
 
-func TestAPIStatus(t *testing.T) {
+func TestAPIMyStatus(t *testing.T) {
 	assert := assert.New(t)
-	s, err := webtest.NewWithDBSetup(SetupMigration)
+	s, err := webtest.NewWithDBSetup(Register, SetupMigration)
 	assert.NoError(err)
 	defer s.Close()
 	assert.NotNil(s)

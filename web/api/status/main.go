@@ -34,19 +34,17 @@ type Status struct {
 // @Failure 400 {object} web.HTTPError
 // @Failure 404 {object} web.HTTPError
 // @Router /api/status [get]
-func init() {
-	web.ModuleRegister(func(r *gin.Engine, ws *web.Service) {
-		r.GET("/api/status", func(c *gin.Context) {
-			status := &Status{
-				Version: VERSION,
-				Up:      UP(),
-				Extras:  EXTRAS,
-			}
-			if !status.Up {
-				c.JSON(http.StatusInternalServerError, status)
-				return
-			}
-			c.JSON(http.StatusOK, status)
-		})
+func Register(r *gin.Engine, ws *web.Service) {
+	r.GET("/api/status", func(c *gin.Context) {
+		status := &Status{
+			Version: VERSION,
+			Up:      UP(),
+			Extras:  EXTRAS,
+		}
+		if !status.Up {
+			c.JSON(http.StatusInternalServerError, status)
+			return
+		}
+		c.JSON(http.StatusOK, status)
 	})
 }

@@ -23,8 +23,9 @@ var (
 
 // Option to configure TestServer
 type Option struct {
-	ReRun   bool
-	DBSetup func(db *database.Database)
+	ReRun        bool
+	DBSetup      func(db *database.Database)
+	ModuleLoader web.ModuleRegisterFunc
 }
 
 type testServer struct {
@@ -32,7 +33,7 @@ type testServer struct {
 	Mails       chan *mailer.TestingMail
 	Close       func()
 	gin         *gin.Engine
-	ws          *web.Service
+	WS          *web.Service
 	lastCookies []*http.Cookie
 }
 
@@ -43,13 +44,17 @@ type Login struct {
 }
 
 // New starts WebService for testing
-func New() (*testServer, error) {
-	return NewWithOption(Option{})
+func New(modules web.ModuleRegisterFunc) (*testServer, error) {
+	return NewWithOption(Option{ModuleLoader: modules})
 }
 
 // NewWithDBSetup allows to reconfigure before ReRun the database - e.g. for adding Migration-Steps
-func NewWithDBSetup(dbCall func(db *database.Database)) (*testServer, error) {
-	return NewWithOption(Option{ReRun: true, DBSetup: dbCall})
+func NewWithDBSetup(modules web.ModuleRegisterFunc, dbCall func(db *database.Database)) (*testServer, error) {
+	return NewWithOption(Option{
+		ReRun:        true,
+		DBSetup:      dbCall,
+		ModuleLoader: modules,
+	})
 }
 
 // NewWithOption allows to configure WebService for testing
@@ -92,6 +97,7 @@ func NewWithOption(option Option) (*testServer, error) {
 		DB:     dbConfig.DB,
 		Mailer: mail,
 	}
+	ws.ModuleRegister(option.ModuleLoader)
 	ws.Session.Name = "mysession"
 	ws.Session.Secret = "hidden"
 
@@ -103,13 +109,13 @@ func NewWithOption(option Option) (*testServer, error) {
 		Mails: mock.Mails,
 		Close: mock.Close,
 		gin:   r,
-		ws:    ws,
+		WS:    ws,
 	}, nil
 }
 
 // DatabaseForget, to run a test without a database
 func (s *testServer) DatabaseForget() {
-	s.ws.DB = nil
+	s.WS.DB = nil
 	s.DB = nil
 }
 
