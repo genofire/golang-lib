@@ -7,6 +7,7 @@ type HTTPError struct {
 	Data    interface{} `json:"data,omitempty" swaggerignore:"true"`
 }
 
+// Error strings used for HTTPError.Message.
 const (
 	APIErrorInvalidRequestFormat = "Invalid Request Format"
 	APIErrorInternalDatabase     = "Internal Database Error"

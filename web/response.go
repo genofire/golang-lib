@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// MIME type strings.
 const (
 	ContentTypeJSON = "application/json"
 	ContentTypeJS   = "application/javascript"
