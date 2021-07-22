@@ -15,6 +15,7 @@ require (
 	github.com/go-mail/mail v2.3.1+incompatible
 	github.com/google/uuid v1.2.0
 	github.com/kylelemons/godebug v1.1.0 // indirect
+	github.com/minio/minio-go/v7 v7.0.12 // indirect
 	github.com/naoina/go-stringutil v0.1.0 // indirect
 	github.com/naoina/toml v0.1.1
 	github.com/prometheus/client_golang v1.10.0
