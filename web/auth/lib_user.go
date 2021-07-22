@@ -19,7 +19,7 @@ func GetCurrentUserID(c *gin.Context) (uuid.UUID, bool) {
 	v := session.Get("user_id")
 	if v == nil {
 		c.JSON(http.StatusUnauthorized, web.HTTPError{
-			Message: APIErrorNoSession,
+			Message: ErrAPINoSession.Error(),
 		})
 		return uuid.Nil, false
 	}
@@ -38,13 +38,13 @@ func GetCurrentUser(c *gin.Context, ws *web.Service) (*User, bool) {
 	if err := ws.DB.First(d).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			c.JSON(http.StatusUnauthorized, web.HTTPError{
-				Message: APIErrorUserNotFound,
+				Message: ErrAPIUserNotFound.Error(),
 				Error:   err.Error(),
 			})
 			return nil, false
 		}
 		c.JSON(http.StatusInternalServerError, web.HTTPError{
-			Message: web.APIErrorInternalDatabase,
+			Message: web.ErrAPIInternalDatabase.Error(),
 			Error:   err.Error(),
 		})
 		return nil, false

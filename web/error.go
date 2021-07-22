@@ -1,5 +1,7 @@
 package web
 
+import "errors"
+
 // HTTPError is returned in HTTP error responses.
 type HTTPError struct {
 	Message string      `json:"message" example:"invalid format"`
@@ -8,8 +10,8 @@ type HTTPError struct {
 }
 
 // Error strings used for HTTPError.Message.
-const (
-	APIErrorInvalidRequestFormat = "Invalid Request Format"
-	APIErrorInternalDatabase     = "Internal Database Error"
-	APIErrorNotFound             = "Not found"
+var (
+	ErrAPIInvalidRequestFormat = errors.New("Invalid Request Format")
+	ErrAPIInternalDatabase     = errors.New("Internal Database Error")
+	ErrAPINotFound             = errors.New("Not found")
 )

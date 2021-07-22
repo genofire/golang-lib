@@ -25,7 +25,7 @@ func apiMyDelete(r *gin.Engine, ws *web.Service) {
 		}
 		if err := ws.DB.Delete(&User{ID: id}).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, web.HTTPError{
-				Message: web.APIErrorInternalDatabase,
+				Message: web.ErrAPIInternalDatabase.Error(),
 				Error:   err.Error(),
 			})
 			return

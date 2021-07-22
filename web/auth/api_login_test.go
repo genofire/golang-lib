@@ -21,21 +21,21 @@ func TestAPILogin(t *testing.T) {
 	// invalid
 	err = s.Request(http.MethodPost, "/api/v1/auth/login", 1, http.StatusBadRequest, &hErr)
 	assert.NoError(err)
-	assert.Equal(web.APIErrorInvalidRequestFormat, hErr.Message)
+	assert.Equal(web.ErrAPIInvalidRequestFormat.Error(), hErr.Message)
 
 	req := login{}
 	hErr = web.HTTPError{}
 	// invalid - user
 	err = s.Request(http.MethodPost, "/api/v1/auth/login", &req, http.StatusUnauthorized, &hErr)
 	assert.NoError(err)
-	assert.Equal(APIErrorUserNotFound, hErr.Message)
+	assert.Equal(ErrAPIUserNotFound.Error(), hErr.Message)
 
 	req.Username = "admin"
 	hErr = web.HTTPError{}
 	// invalid - password
 	err = s.Request(http.MethodPost, "/api/v1/auth/login", &req, http.StatusUnauthorized, &hErr)
 	assert.NoError(err)
-	assert.Equal(APIErrorIncorrectPassword, hErr.Message)
+	assert.Equal(ErrAPIIncorrectPassword.Error(), hErr.Message)
 
 	req.Password = "CHANGEME"
 	obj := User{}

@@ -21,7 +21,7 @@ func TestAPIDeleteMyProfil(t *testing.T) {
 	// invalid
 	err = s.Request(http.MethodDelete, "/api/v1/my/profil", nil, http.StatusUnauthorized, &hErr)
 	assert.NoError(err)
-	assert.Equal(APIErrorNoSession, hErr.Message)
+	assert.Equal(ErrAPINoSession.Error(), hErr.Message)
 
 	err = s.Login(webtest.Login{
 		Username: "admin",

@@ -28,7 +28,7 @@ func TestAPIPasswordCode(t *testing.T) {
 	// invalid
 	err = s.Request(http.MethodPost, "/api/v1/auth/password/code", &passwordNew, http.StatusBadRequest, &hErr)
 	assert.NoError(err)
-	assert.Equal(web.APIErrorInvalidRequestFormat, hErr.Message)
+	assert.Equal(web.ErrAPIInvalidRequestFormat.Error(), hErr.Message)
 
 	res := ""
 	// set new password
@@ -46,7 +46,7 @@ func TestAPIPasswordCode(t *testing.T) {
 		Password:   passwordCurrent,
 	}, http.StatusBadRequest, &hErr)
 	assert.NoError(err)
-	assert.Equal(APIErrorUserNotFound, hErr.Message)
+	assert.Equal(ErrAPIUserNotFound.Error(), hErr.Message)
 
 	forgetCode = uuid.New()
 	s.DB.DB.Model(&User{ID: TestUser1ID}).Update("forget_code", forgetCode)

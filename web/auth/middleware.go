@@ -34,7 +34,7 @@ func MiddlewarePermissionParam(ws *web.Service, obj HasPermission, param string)
 		objID, err := uuid.Parse(c.Params.ByName(param))
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, web.HTTPError{
-				Message: web.APIErrorInvalidRequestFormat,
+				Message: web.ErrAPIInvalidRequestFormat.Error(),
 				Error:   err.Error(),
 			})
 			c.Abort()
@@ -42,7 +42,7 @@ func MiddlewarePermissionParam(ws *web.Service, obj HasPermission, param string)
 		_, err = obj.HasPermission(ws.DB, userID, objID)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, web.HTTPError{
-				Message: http.StatusText(http.StatusUnauthorized),
+				Message: ErrAPINoPermission.Error(),
 				Error:   err.Error(),
 			})
 			c.Abort()

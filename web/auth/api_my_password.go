@@ -29,14 +29,14 @@ func apiMyPassword(r *gin.Engine, ws *web.Service) {
 		var password string
 		if err := c.BindJSON(&password); err != nil {
 			c.JSON(http.StatusBadRequest, web.HTTPError{
-				Message: web.APIErrorInvalidRequestFormat,
+				Message: web.ErrAPIInvalidRequestFormat.Error(),
 				Error:   err.Error(),
 			})
 			return
 		}
 		if err := d.SetPassword(password); err != nil {
 			c.JSON(http.StatusInternalServerError, web.HTTPError{
-				Message: APIErrroCreatePassword,
+				Message: ErrAPICreatePassword.Error(),
 				Error:   err.Error(),
 			})
 			return
@@ -44,7 +44,7 @@ func apiMyPassword(r *gin.Engine, ws *web.Service) {
 
 		if err := ws.DB.Save(&d).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, web.HTTPError{
-				Message: web.APIErrorInternalDatabase,
+				Message: web.ErrAPIInternalDatabase.Error(),
 				Error:   err.Error(),
 			})
 			return

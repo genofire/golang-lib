@@ -1,15 +1,20 @@
 package auth
 
-const (
-	// APIErrorUserNotFound api error string if user not found
-	APIErrorUserNotFound string = "user not found"
-	// APIErrorIncorrectPassword api error string if password is incorrect
-	APIErrorIncorrectPassword string = "incorrect password"
-	// APIErrorNoSession api error string if no session exists
-	APIErrorNoSession string = "no session"
-	// APIErrorCreateSession api error string if session could not created
-	APIErrorCreateSession string = "create session"
+import "errors"
 
-	// APIErrroCreatePassword api error string if password could not created
-	APIErrroCreatePassword string = "error during create password"
+var (
+	// ErrAPIUserNotFound api error string if user not found
+	ErrAPIUserNotFound = errors.New("user not found")
+	// ErrAPIIncorrectPassword api error string if password is incorrect
+	ErrAPIIncorrectPassword = errors.New("incorrect password")
+	// ErrAPINoSession api error string if no session exists
+	ErrAPINoSession = errors.New("no session")
+	// ErrAPICreateSession api error string if session could not created
+	ErrAPICreateSession = errors.New("create session")
+
+	// ErrAPICreatePassword api error string if password could not created
+	ErrAPICreatePassword = errors.New("error during create password")
+
+	// ErrAPINoPermission api error string if an error happen on accesing this object
+	ErrAPINoPermission = errors.New("error on access an object")
 )

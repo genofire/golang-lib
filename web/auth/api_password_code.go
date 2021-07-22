@@ -33,7 +33,7 @@ func apiPasswordCode(r *gin.Engine, ws *web.Service) {
 		var req PasswordWithForgetCode
 		if err := c.BindJSON(&req); err != nil {
 			c.JSON(http.StatusBadRequest, web.HTTPError{
-				Message: web.APIErrorInvalidRequestFormat,
+				Message: web.ErrAPIInvalidRequestFormat.Error(),
 				Error:   err.Error(),
 			})
 			return
@@ -42,20 +42,20 @@ func apiPasswordCode(r *gin.Engine, ws *web.Service) {
 		if err := ws.DB.Where("forget_code", req.ForgetCode).First(&d).Error; err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				c.JSON(http.StatusBadRequest, web.HTTPError{
-					Message: APIErrorUserNotFound,
+					Message: ErrAPIUserNotFound.Error(),
 					Error:   err.Error(),
 				})
 				return
 			}
 			c.JSON(http.StatusInternalServerError, web.HTTPError{
-				Message: APIErrroCreatePassword,
+				Message: ErrAPICreatePassword.Error(),
 				Error:   err.Error(),
 			})
 			return
 		}
 		if err := d.SetPassword(req.Password); err != nil {
 			c.JSON(http.StatusInternalServerError, web.HTTPError{
-				Message: APIErrroCreatePassword,
+				Message: ErrAPICreatePassword.Error(),
 				Error:   err.Error(),
 			})
 			return
@@ -64,7 +64,7 @@ func apiPasswordCode(r *gin.Engine, ws *web.Service) {
 
 		if err := ws.DB.Save(&d).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, web.HTTPError{
-				Message: web.APIErrorInternalDatabase,
+				Message: web.ErrAPIInternalDatabase.Error(),
 				Error:   err.Error(),
 			})
 			return

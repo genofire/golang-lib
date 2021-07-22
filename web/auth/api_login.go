@@ -32,7 +32,7 @@ func apiLogin(r *gin.Engine, ws *web.Service) {
 		var data login
 		if err := c.BindJSON(&data); err != nil {
 			c.JSON(http.StatusBadRequest, web.HTTPError{
-				Message: web.APIErrorInvalidRequestFormat,
+				Message: web.ErrAPIInvalidRequestFormat.Error(),
 				Error:   err.Error(),
 			})
 			return
@@ -42,20 +42,20 @@ func apiLogin(r *gin.Engine, ws *web.Service) {
 		if err := ws.DB.Where(map[string]interface{}{"username": data.Username}).First(d).Error; err != nil {
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				c.JSON(http.StatusUnauthorized, web.HTTPError{
-					Message: APIErrorUserNotFound,
+					Message: ErrAPIUserNotFound.Error(),
 					Error:   err.Error(),
 				})
 				return
 			}
 			c.JSON(http.StatusInternalServerError, web.HTTPError{
-				Message: web.APIErrorInternalDatabase,
+				Message: web.ErrAPIInternalDatabase.Error(),
 				Error:   err.Error(),
 			})
 			return
 		}
 		if !d.ValidatePassword(data.Password) {
 			c.JSON(http.StatusUnauthorized, web.HTTPError{
-				Message: APIErrorIncorrectPassword,
+				Message: ErrAPIIncorrectPassword.Error(),
 			})
 			return
 		}
@@ -64,7 +64,7 @@ func apiLogin(r *gin.Engine, ws *web.Service) {
 		session.Set("user_id", d.ID.String())
 		if err := session.Save(); err != nil {
 			c.JSON(http.StatusBadRequest, web.HTTPError{
-				Message: APIErrorCreateSession,
+				Message: ErrAPICreateSession.Error(),
 				Error:   err.Error(),
 			})
 			return

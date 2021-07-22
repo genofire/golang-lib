@@ -24,7 +24,7 @@ func TestAPIPassword(t *testing.T) {
 	// no auth
 	err = s.Request(http.MethodPost, "/api/v1/my/auth/password", &passwordNew, http.StatusUnauthorized, &hErr)
 	assert.NoError(err)
-	assert.Equal(APIErrorNoSession, hErr.Message)
+	assert.Equal(ErrAPINoSession.Error(), hErr.Message)
 
 	err = s.TestLogin()
 	assert.NoError(err)
@@ -33,7 +33,7 @@ func TestAPIPassword(t *testing.T) {
 	// invalid
 	err = s.Request(http.MethodPost, "/api/v1/my/auth/password", nil, http.StatusBadRequest, &hErr)
 	assert.NoError(err)
-	assert.Equal(web.APIErrorInvalidRequestFormat, hErr.Message)
+	assert.Equal(web.ErrAPIInvalidRequestFormat.Error(), hErr.Message)
 
 	res := false
 	// set new password

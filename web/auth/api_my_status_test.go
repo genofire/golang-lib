@@ -21,7 +21,7 @@ func TestAPIMyStatus(t *testing.T) {
 	// invalid
 	err = s.Request(http.MethodGet, "/api/v1/my/auth/status", nil, http.StatusUnauthorized, &hErr)
 	assert.NoError(err)
-	assert.Equal(APIErrorNoSession, hErr.Message)
+	assert.Equal(ErrAPINoSession.Error(), hErr.Message)
 
 	err = s.TestLogin()
 	assert.NoError(err)
