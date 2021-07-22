@@ -5,6 +5,7 @@ import (
 
 	gormigrate "github.com/genofire/gormigrate/v2"
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 
 	"dev.sum7.eu/genofire/golang-lib/database"
@@ -30,6 +31,7 @@ func SetupMigration(db *database.Database) {
 		{
 			ID: "10-data-0008-01-user",
 			Migrate: func(tx *gorm.DB) error {
+				PasswordHashCost = bcrypt.MinCost
 				user, err := NewUser("admin", "CHANGEME")
 				if err != nil {
 					return err
