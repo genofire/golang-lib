@@ -54,9 +54,13 @@ func StoreFromHTTP(fs FS, r *http.Request, key string) error {
 	buf := make([]byte, 512)
 	n, err := file.Read(buf)
 	if err != nil && err != io.EOF {
-		return err
+		return fmt.Errorf("read from file: %w", err)
 	}
 	contentType := http.DetectContentType(buf[:n])
+	_, err = file.Seek(0, io.SeekStart)
+	if err != nil {
+		return fmt.Errorf("seek in file: %w", err)
+	}
 
 	i := strings.LastIndexAny(fileHeader.Filename, "/\\")
 	// if i == -1 { i = -1 }
