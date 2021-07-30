@@ -1,4 +1,4 @@
-package s3
+package s3_test
 
 import (
 	"testing"
@@ -13,12 +13,12 @@ import (
 func TestTypes(t *testing.T) {
 	assert := assert.New(t)
 
-	var fs file.FS
-	fs, err := New("127.0.0.1", false, "", "", "", "")
-	_ = fs
+	var fstore file.FS
+	fstore, err := s3.New("127.0.0.1", false, "", "", "", "")
+	_ = fstore
 	assert.Error(err)
 }
 
 func ExampleNew() {
-	New("play.min.io", true, "Q3AM3UQ867SPQQA43P2F", "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG", "file-store", "")
+	s3.New("play.min.io", true, "Q3AM3UQ867SPQQA43P2F", "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG", "file-store", "")
 }

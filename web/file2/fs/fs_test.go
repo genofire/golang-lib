@@ -1,4 +1,4 @@
-package fs
+package fs_test
 
 import (
 	"io"
@@ -10,11 +10,12 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"dev.sum7.eu/genofire/golang-lib/web/file2"
+	"dev.sum7.eu/genofire/golang-lib/web/file2/fs"
 )
 
 func TestOpenStat(t *testing.T) {
 	assert := assert.New(t)
-	var fs file.FS = &FS{Root: "./testdata"}
+	var fs file.FS = &fs.FS{Root: "./testdata"}
 	assert.NoError(fs.Check())
 
 	f, err := fs.Open("glenda")
@@ -32,7 +33,7 @@ func TestOpenStat(t *testing.T) {
 
 func TestCreateOpenUUIDRead(t *testing.T) {
 	assert := assert.New(t)
-	var fs file.FS = &FS{Root: "./testdata"}
+	var fs file.FS = &fs.FS{Root: "./testdata"}
 	assert.NoError(fs.Check())
 
 	err := fs.Store(uuid.MustParse("f9375ccb-ee09-4ecf-917e-b88725efcb68"), "$name", "text/plain", strings.NewReader("hello, world\n"))
