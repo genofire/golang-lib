@@ -29,6 +29,7 @@ func TestOpenStat(t *testing.T) {
 	assert.Equal(uuid.MustParse("d2750ced-4bdc-41d0-8c2f-5b9de44b84ef"), fi.(file.FileInfo).ID())
 	assert.Equal("text/plain", fi.(file.FileInfo).ContentType())
 	assert.Equal("glenda", fi.Name())
+	assert.Equal(int64(99), fi.Size())
 }
 
 func TestCreateOpenUUIDRead(t *testing.T) {
