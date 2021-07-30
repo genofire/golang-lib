@@ -1,8 +1,6 @@
 package file
 
 import (
-	"errors"
-
 	"dev.sum7.eu/genofire/golang-lib/web/file/fs"
 	"dev.sum7.eu/genofire/golang-lib/web/file/s3"
 )
@@ -23,7 +21,7 @@ var stringToType = map[string]fsType{
 func (t *fsType) UnmarshalText(input []byte) error {
 	val, ok := stringToType[string(input)]
 	if !ok {
-		return errors.New("invalid file store type")
+		return ErrInvalidFSType
 	}
 	*t = val
 	return nil
@@ -31,29 +29,29 @@ func (t *fsType) UnmarshalText(input []byte) error {
 
 // FSInfo is a TOML structure storing access information about a file store.
 type FSInfo struct {
-	fstype fsType `toml:"type"`
+	FSType fsType `toml:"type"`
 	// file system
-	root string `toml:",omitempty"`
+	Root string `toml:",omitempty"`
 	// s3
-	endpoint string `toml:",omitempty"`
-	secure   bool   `toml:",omitempty"`
-	id       string `toml:",omitempty"`
-	secret   string `toml:",omitempty"`
-	bucket   string `toml:",omitempty"`
-	location string `toml:",omitempty"`
+	Endpoint string `toml:",omitempty"`
+	Secure   bool   `toml:",omitempty"`
+	ID       string `toml:",omitempty"`
+	Secret   string `toml:",omitempty"`
+	Bucket   string `toml:",omitempty"`
+	Location string `toml:",omitempty"`
 }
 
 // Create creates a file store from the information provided.
 func (i *FSInfo) Create() (FS, error) {
-	switch i.fstype {
+	switch i.FSType {
 	case typeFS:
-		if len(i.root) == 0 {
-			return nil, errors.New("no file store root")
+		if len(i.Root) == 0 {
+			return nil, ErrNoFSRoot
 		}
-		return &fs.FS{Root: i.root}, nil
+		return &fs.FS{Root: i.Root}, nil
 	case typeS3:
-		return s3.New(i.endpoint, i.secure, i.id, i.secret, i.bucket, i.location)
+		return s3.New(i.Endpoint, i.Secure, i.ID, i.Secret, i.Bucket, i.Location)
 	default:
-		return nil, errors.New("FSInfo.Create not implemented for provided file store type")
+		return nil, ErrNotImplementedFSType
 	}
 }

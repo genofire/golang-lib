@@ -85,7 +85,7 @@ func (fs *FS) OpenUUID(id uuid.UUID) (fs.File, error) {
 	if err != nil {
 		return nil, fmt.Errorf("open data: %w", err)
 	}
-	return File{File: f, fs: fs, id: uuid.MustParse(id.String())}, nil
+	return File{File: f, fs: fs, id: id}, nil
 }
 
 // Open searches for and opens the file with the given name.
