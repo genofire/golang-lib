@@ -9,8 +9,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
-	"dev.sum7.eu/genofire/golang-lib/web/file2"
-	"dev.sum7.eu/genofire/golang-lib/web/file2/fs"
+	"dev.sum7.eu/genofire/golang-lib/web/file"
+	"dev.sum7.eu/genofire/golang-lib/web/file/fs"
 )
 
 func TestOpenStat(t *testing.T) {
