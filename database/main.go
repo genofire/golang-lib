@@ -9,7 +9,7 @@ import (
 
 // Database struct to read from config
 type Database struct {
-	DB                *gorm.DB
+	DB                *gorm.DB        `toml:"-"`
 	Connection        string          `toml:"connection"`
 	Debug             bool            `toml:"debug"`
 	Testdata          bool            `toml:"testdata"`
