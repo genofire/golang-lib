@@ -28,7 +28,7 @@ type Option struct {
 	ModuleLoader web.ModuleRegisterFunc
 }
 
-type testServer struct {
+type TestServer struct {
 	DB          *database.Database
 	Mails       chan *mailer.TestingMail
 	Close       func()
@@ -44,12 +44,12 @@ type Login struct {
 }
 
 // New starts WebService for testing
-func New(modules web.ModuleRegisterFunc) (*testServer, error) {
+func New(modules web.ModuleRegisterFunc) (*TestServer, error) {
 	return NewWithOption(Option{ModuleLoader: modules})
 }
 
 // NewWithDBSetup allows to reconfigure before ReRun the database - e.g. for adding Migration-Steps
-func NewWithDBSetup(modules web.ModuleRegisterFunc, dbCall func(db *database.Database)) (*testServer, error) {
+func NewWithDBSetup(modules web.ModuleRegisterFunc, dbCall func(db *database.Database)) (*TestServer, error) {
 	return NewWithOption(Option{
 		ReRun:        true,
 		DBSetup:      dbCall,
@@ -58,7 +58,7 @@ func NewWithDBSetup(modules web.ModuleRegisterFunc, dbCall func(db *database.Dat
 }
 
 // NewWithOption allows to configure WebService for testing
-func NewWithOption(option Option) (*testServer, error) {
+func NewWithOption(option Option) (*TestServer, error) {
 	// db setup
 	dbConfig := database.Database{
 		Connection: DBConnection,
@@ -104,7 +104,7 @@ func NewWithOption(option Option) (*testServer, error) {
 	r := gin.Default()
 	ws.LoadSession(r)
 	ws.Bind(r)
-	return &testServer{
+	return &TestServer{
 		DB:    &dbConfig,
 		Mails: mock.Mails,
 		Close: mock.Close,
@@ -114,13 +114,13 @@ func NewWithOption(option Option) (*testServer, error) {
 }
 
 // DatabaseForget, to run a test without a database
-func (s *testServer) DatabaseForget() {
+func (s *TestServer) DatabaseForget() {
 	s.WS.DB = nil
 	s.DB = nil
 }
 
 // Request sends a request to webtest WebService
-func (s *testServer) Request(method, url string, body interface{}, expectCode int, jsonObj interface{}) error {
+func (s *TestServer) Request(method, url string, body interface{}, expectCode int, jsonObj interface{}) error {
 	var jsonBody io.Reader
 	if body != nil {
 		if strBody, ok := body.(string); ok {
@@ -169,13 +169,13 @@ func (s *testServer) Request(method, url string, body interface{}, expectCode in
 }
 
 // Login to API by send request
-func (s *testServer) Login(login Login) error {
+func (s *TestServer) Login(login Login) error {
 	// POST: correct login
 	return s.Request(http.MethodPost, "/api/v1/auth/login", &login, http.StatusOK, nil)
 }
 
 // TestLogin to API by default login data
-func (s *testServer) TestLogin() error {
+func (s *TestServer) TestLogin() error {
 	return s.Login(Login{
 		Username: "admin",
 		Password: "CHANGEME",
