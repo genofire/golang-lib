@@ -10,14 +10,14 @@ func TestJSONRequest(t *testing.T) {
 	assert := assert.New(t)
 
 	data := struct {
-		IP string `json:"ip"`
+		IP string `json:"query"`
 	}{}
-	err := JSONRequest("http://ip.jsontest.com/", &data)
+	err := JSONRequest("http://ip-api.com/json/?fields=query", &data)
 	assert.NoError(err)
 	assert.NotEqual("", data.IP)
 
 	wrongData := ""
-	err = JSONRequest("http://ip.jsontest.com/", &wrongData)
+	err = JSONRequest("http://ip-api.com/json/?fields=query", &wrongData)
 	assert.Error(err)
 
 	wrongData = ""
