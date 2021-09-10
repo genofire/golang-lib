@@ -13,7 +13,7 @@ pipeline:
       - apt install python3 --yes
       - ./.ci/check-testfiles
       - ./.ci/check-gofmt
-      - go get github.com/client9/misspell/cmd/misspell
+      - go install github.com/client9/misspell/cmd/misspell@latest
       - misspell -error .
 
   test-coverage:
