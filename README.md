@@ -5,7 +5,8 @@
 
 some packages collected for easy and often used functions
 
-- `file`: Read and Save - JSON, TOML
 - `database`: Start by Config, Migrate
-- `worker`: cronjob
+- `file`: Read and Save - JSON, TOML
+- `mailer`: Send E-Mail and receive for testing
 - `web`: helpers for golang-gin framework e.g. websocket, metrics, status, auth
+- `worker`: cronjob
