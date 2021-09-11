@@ -4,6 +4,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// PasswordHashCost - to set global, for more speed or security
 var PasswordHashCost = bcrypt.DefaultCost
 
 // HashPassword  - create new hash of password
