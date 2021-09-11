@@ -28,6 +28,7 @@ type Option struct {
 	ModuleLoader web.ModuleRegisterFunc
 }
 
+// TestServer - to run it without listen an server
 type TestServer struct {
 	DB          *database.Database
 	Mails       chan *mailer.TestingMail
@@ -113,7 +114,7 @@ func NewWithOption(option Option) (*TestServer, error) {
 	}, nil
 }
 
-// DatabaseForget, to run a test without a database
+// DatabaseForget to run a test without a database
 func (s *TestServer) DatabaseForget() {
 	s.WS.DB = nil
 	s.DB = nil
