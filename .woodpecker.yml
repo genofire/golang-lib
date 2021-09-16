@@ -9,8 +9,6 @@ pipeline:
     image: golang:latest
     group: test
     commands:
-      - apt update
-      - apt install python3 --yes
       - ./.ci/check-testfiles
       - ./.ci/check-gofmt
       - go install github.com/client9/misspell/cmd/misspell@latest
