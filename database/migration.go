@@ -69,9 +69,9 @@ func (config *Database) addMigrate(testdata bool, m ...*gormigrate.Migration) {
 
 	for _, i := range m {
 		if testdata {
-			config.migrations[i.ID] = i
-		} else {
 			config.migrationTestdata[i.ID] = i
+		} else {
+			config.migrations[i.ID] = i
 		}
 	}
 }
