@@ -24,6 +24,7 @@ var (
 // Option to configure TestServer
 type Option struct {
 	ReRun        bool
+	Mailer       bool
 	DBSetup      func(db *database.Database)
 	ModuleLoader web.ModuleRegisterFunc
 }
@@ -87,31 +88,32 @@ func NewWithOption(option Option) (*TestServer, error) {
 	gin.EnableJsonDecoderDisallowUnknownFields()
 	gin.SetMode(gin.TestMode)
 
-	mock, mail := mailer.NewFakeServer()
-
-	err = mail.Setup()
-	if err != nil {
-		return nil, err
-	}
-
 	ws := &web.Service{
-		DB:     dbConfig.DB,
-		Mailer: mail,
+		DB: dbConfig.DB,
+	}
+	ts := &TestServer{
+		DB: &dbConfig,
+		WS: ws,
 	}
 	ws.ModuleRegister(option.ModuleLoader)
 	ws.Session.Name = "mysession"
 	ws.Session.Secret = "hidden"
 
+	if option.Mailer {
+		mock, mail := mailer.NewFakeServer()
+		if err := mail.Setup(); err != nil {
+			return nil, err
+		}
+		ws.Mailer = mail
+		ts.Mails = mock.Mails
+		ts.Close = mock.Close
+	}
+
 	r := gin.Default()
 	ws.LoadSession(r)
 	ws.Bind(r)
-	return &TestServer{
-		DB:    &dbConfig,
-		Mails: mock.Mails,
-		Close: mock.Close,
-		gin:   r,
-		WS:    ws,
-	}, nil
+	ts.gin = r
+	return ts, nil
 }
 
 // DatabaseForget to run a test without a database
