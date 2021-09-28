@@ -23,10 +23,11 @@ var (
 
 // Option to configure TestServer
 type Option struct {
-	ReRun        bool
-	Mailer       bool
-	DBSetup      func(db *database.Database)
 	ModuleLoader web.ModuleRegisterFunc
+	Database     bool
+	DBReRun      bool
+	DBSetup      func(db *database.Database)
+	Mailer       bool
 }
 
 // TestServer - to run it without listen an server
@@ -47,57 +48,57 @@ type Login struct {
 
 // New starts WebService for testing
 func New(modules web.ModuleRegisterFunc) (*TestServer, error) {
-	return NewWithOption(Option{ModuleLoader: modules})
+	return Option{ModuleLoader: modules}.New()
 }
 
 // NewWithDBSetup allows to reconfigure before ReRun the database - e.g. for adding Migration-Steps
 func NewWithDBSetup(modules web.ModuleRegisterFunc, dbCall func(db *database.Database)) (*TestServer, error) {
-	return NewWithOption(Option{
-		ReRun:        true,
+	return Option{
+		Database:     true,
+		DBReRun:      true,
 		DBSetup:      dbCall,
 		ModuleLoader: modules,
-	})
+	}.New()
 }
 
-// NewWithOption allows to configure WebService for testing
-func NewWithOption(option Option) (*TestServer, error) {
-	// db setup
-	dbConfig := database.Database{
-		Connection: DBConnection,
-		Testdata:   true,
-		Debug:      false,
-		LogLevel:   0,
-	}
-	if option.DBSetup != nil {
-		option.DBSetup(&dbConfig)
-	}
-	var err error
-	if option.ReRun {
-		err = dbConfig.ReRun()
-	} else {
-		err = dbConfig.Run()
-	}
-	if err != nil && err != database.ErrNothingToMigrate {
-		return nil, err
-	}
-	if dbConfig.DB == nil {
-		return nil, database.ErrNotConnected
-	}
+// New allows to configure WebService for testing
+func (option Option) New() (*TestServer, error) {
 
 	// api setup
 	gin.EnableJsonDecoderDisallowUnknownFields()
 	gin.SetMode(gin.TestMode)
 
-	ws := &web.Service{
-		DB: dbConfig.DB,
-	}
-	ts := &TestServer{
-		DB: &dbConfig,
-		WS: ws,
-	}
-	ws.ModuleRegister(option.ModuleLoader)
+	ws := &web.Service{}
 	ws.Session.Name = "mysession"
 	ws.Session.Secret = "hidden"
+	ts := &TestServer{
+		WS: ws,
+	}
+	// db setup
+	if option.Database {
+		ts.DB = &database.Database{
+			Connection: DBConnection,
+			Testdata:   true,
+			Debug:      false,
+			LogLevel:   0,
+		}
+		if option.DBSetup != nil {
+			option.DBSetup(ts.DB)
+		}
+		var err error
+		if option.DBReRun {
+			err = ts.DB.ReRun()
+		} else {
+			err = ts.DB.Run()
+		}
+		if err != nil && err != database.ErrNothingToMigrate {
+			return nil, err
+		}
+		if ts.DB.DB == nil {
+			return nil, database.ErrNotConnected
+		}
+		ws.DB = ts.DB.DB
+	}
 
 	if option.Mailer {
 		mock, mail := mailer.NewFakeServer()
@@ -108,6 +109,8 @@ func NewWithOption(option Option) (*TestServer, error) {
 		ts.Mails = mock.Mails
 		ts.Close = mock.Close
 	}
+
+	ws.ModuleRegister(option.ModuleLoader)
 
 	r := gin.Default()
 	ws.LoadSession(r)
