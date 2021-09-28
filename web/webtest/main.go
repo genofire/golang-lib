@@ -64,16 +64,15 @@ func NewWithDBSetup(modules web.ModuleRegisterFunc, dbCall func(db *database.Dat
 // New allows to configure WebService for testing
 func (option Option) New() (*TestServer, error) {
 
-	// api setup
-	gin.EnableJsonDecoderDisallowUnknownFields()
-	gin.SetMode(gin.TestMode)
-
 	ws := &web.Service{}
 	ws.Session.Name = "mysession"
 	ws.Session.Secret = "hidden"
+
 	ts := &TestServer{
-		WS: ws,
+		WS:    ws,
+		Close: func() {},
 	}
+
 	// db setup
 	if option.Database {
 		ts.DB = &database.Database{
@@ -109,6 +108,11 @@ func (option Option) New() (*TestServer, error) {
 		ts.Mails = mock.Mails
 		ts.Close = mock.Close
 	}
+
+	// api setup
+
+	gin.EnableJsonDecoderDisallowUnknownFields()
+	gin.SetMode(gin.TestMode)
 
 	ws.ModuleRegister(option.ModuleLoader)
 
