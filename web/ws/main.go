@@ -6,9 +6,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/bdlm/log"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"go.uber.org/zap"
 	"golang.org/x/time/rate"
 
 	"nhooyr.io/websocket"
@@ -17,6 +17,7 @@ import (
 
 // WebsocketEndpoint to handle Request
 type WebsocketEndpoint struct {
+	log *zap.Logger
 	// publishLimiter controls the rate limit applied to the publish endpoint.
 	//
 	// Defaults to one publish every 100ms with a burst of 8.
@@ -72,8 +73,9 @@ func (m *Message) Reply(msg *Message) {
 type MessageHandleFunc func(ctx context.Context, msg *Message)
 
 // NewEndpoint - create an empty websocket
-func NewEndpoint() *WebsocketEndpoint {
+func NewEndpoint(log *zap.Logger) *WebsocketEndpoint {
 	return &WebsocketEndpoint{
+		log:            log,
 		publishLimiter: rate.NewLimiter(rate.Every(time.Millisecond*100), 8),
 		Subscribers:    make(map[*Subscriber]struct{}),
 		handlers:       make(map[string]MessageHandleFunc),
@@ -119,7 +121,7 @@ func (we *WebsocketEndpoint) Handler(ctx *gin.Context) {
 		websocket.CloseStatus(err) == websocket.StatusGoingAway {
 		return
 	}
-	log.Errorf("subscriber stopped: %s", err)
+	we.log.Error("subscriber stopped", zap.Error(err))
 }
 
 // addSubscriber and startup of websocket endpoint
@@ -141,7 +143,7 @@ func (we *WebsocketEndpoint) addSubscriber(ctxGin *gin.Context, c *websocket.Con
 		if we.OnClose != nil {
 			we.OnClose(s, s.out)
 		}
-		log.Debug("websocket closed")
+		we.log.Debug("websocket closed")
 	}()
 
 	if we.OnOpen != nil {
@@ -156,10 +158,10 @@ func (we *WebsocketEndpoint) addSubscriber(ctxGin *gin.Context, c *websocket.Con
 			websocket.CloseStatus(err) == websocket.StatusGoingAway {
 			return
 		}
-		log.Errorf("websocket reading error: %s", err)
+		we.log.Error("websocket reading error", zap.Error(err))
 	}()
 
-	log.Debug("websocket started")
+	we.log.Debug("websocket started")
 
 	for {
 		select {
@@ -182,7 +184,7 @@ func (we *WebsocketEndpoint) readWorker(ctx context.Context, c *websocket.Conn, 
 		if err != nil {
 			return err
 		}
-		log.WithField("type", msg.Type).Debug("receive")
+		we.log.Debug("receive", zap.String("type", msg.Type))
 		msg.Subscriber = s
 		if handler, ok := we.handlers[msg.Type]; ok {
 			handler(ctx, &msg)

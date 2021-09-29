@@ -10,8 +10,8 @@ maintains a list of modules. When it runs, it executes all of its modules.
 package web
 
 import (
-	"github.com/bdlm/log"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 
 	// acme
 	"github.com/gin-gonic/autotls"
@@ -41,12 +41,19 @@ type Service struct {
 	DB     *gorm.DB        `toml:"-"`
 	Mailer *mailer.Service `toml:"-"`
 
+	log     *zap.Logger
 	modules []ModuleRegisterFunc
+}
+
+// Log - get current logger
+func (s *Service) Log() *zap.Logger {
+	return s.log
 }
 
 // Run creates, configures, and runs a new gin.Engine using its registered
 // modules.
-func (s *Service) Run() error {
+func (s *Service) Run(log *zap.Logger) error {
+	s.log = log
 	gin.EnableJsonDecoderDisallowUnknownFields()
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
@@ -55,14 +62,14 @@ func (s *Service) Run() error {
 
 	if s.AccessLog {
 		r.Use(gin.Logger())
-		log.Debug("request logging enabled")
+		s.log.Debug("request logging enabled")
 	}
 	s.LoadSession(r)
 	s.Bind(r)
 
 	if s.ACME.Enable {
 		if s.Listen != "" {
-			log.Panic("For ACME / Let's Encrypt it is not possible to set `listen`")
+			s.log.Panic("For ACME / Let's Encrypt it is not possible to set `listen`")
 		}
 		m := autocert.Manager{
 			Prompt:     autocert.AcceptTOS,

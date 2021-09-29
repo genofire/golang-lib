@@ -6,12 +6,13 @@ import (
 	"net"
 	"net/textproto"
 
-	"github.com/bdlm/log"
+	"go.uber.org/zap"
 )
 
 var defaultStartupPort = 12025
 
 type fakeServer struct {
+	log   *zap.Logger
 	s     *Service
 	l     net.Listener
 	Mails chan *TestingMail
@@ -24,7 +25,7 @@ type TestingMail struct {
 }
 
 // NewFakeServer - to get mocked Service for mail-service
-func NewFakeServer() (*fakeServer, *Service) {
+func NewFakeServer(log *zap.Logger) (*fakeServer, *Service) {
 	s := &Service{
 		SMTPHost:     "127.0.0.1",
 		SMTPPort:     defaultStartupPort,
@@ -34,17 +35,18 @@ func NewFakeServer() (*fakeServer, *Service) {
 		From:         "golang-lib@example.org",
 	}
 	defaultStartupPort++
-	return newFakeServer(s)
+	return newFakeServer(s, log)
 }
 
-func newFakeServer(s *Service) (*fakeServer, *Service) {
+func newFakeServer(s *Service, log *zap.Logger) (*fakeServer, *Service) {
 	fs := &fakeServer{
+		log:   log,
 		s:     s,
 		Mails: make(chan *TestingMail),
 	}
 	l, err := net.Listen("tcp", fmt.Sprintf("%s:%d", fs.s.SMTPHost, fs.s.SMTPPort))
 	if err != nil {
-		log.Panicf("Error listing: %s", err)
+		log.Panic("error listing", zap.Error(err))
 		return nil, nil
 	}
 	fs.l = l
@@ -63,7 +65,7 @@ func (fs *fakeServer) run() {
 			if errors.Is(err, net.ErrClosed) {
 				return
 			}
-			log.Panicf("Error accepting: %s", err)
+			fs.log.Panic("Error accepting", zap.Error(err))
 		}
 		go fs.handle(conn)
 	}

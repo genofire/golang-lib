@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/zap"
 )
 
 func TestFakeServer(t *testing.T) {
@@ -19,7 +20,7 @@ func TestFakeServer(t *testing.T) {
 
 	// Port
 	assert.Panics(func() {
-		mock, _ := newFakeServer(s)
+		mock, _ := newFakeServer(s, zap.L())
 		mock.Close()
 	})
 }

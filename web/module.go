@@ -1,9 +1,9 @@
 package web
 
 import (
-	"github.com/bdlm/log"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 )
 
 // A ModuleRegisterFunc is a module.
@@ -20,6 +20,6 @@ func (ws *Service) Bind(r *gin.Engine) {
 		f(r, ws)
 	}
 
-	log.Infof("loaded %d modules", len(ws.modules))
+	ws.log.Info("bind modules", zap.Int("count", len(ws.modules)))
 	r.Use(static.Serve("/", static.LocalFile(ws.Webroot, false)))
 }
