@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 
 	"dev.sum7.eu/genofire/golang-lib/database"
 	"dev.sum7.eu/genofire/golang-lib/mailer"
@@ -63,8 +64,10 @@ func NewWithDBSetup(modules web.ModuleRegisterFunc, dbCall func(db *database.Dat
 
 // New allows to configure WebService for testing
 func (option Option) New() (*TestServer, error) {
+	log := zap.L()
 
 	ws := &web.Service{}
+	ws.SetLog(log)
 	ws.Session.Name = "mysession"
 	ws.Session.Secret = "hidden"
 
@@ -100,7 +103,7 @@ func (option Option) New() (*TestServer, error) {
 	}
 
 	if option.Mailer {
-		mock, mail := mailer.NewFakeServer()
+		mock, mail := mailer.NewFakeServer(log)
 		if err := mail.Setup(); err != nil {
 			return nil, err
 		}

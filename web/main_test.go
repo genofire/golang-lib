@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/zap"
 )
 
 var (
@@ -17,13 +18,13 @@ func TestRun(t *testing.T) {
 	s := &Service{AccessLog: true, Listen: "8.8.8.8:80"}
 	s.ModuleRegister(func(_ *gin.Engine, _ *Service) {})
 	// HTTP - failed
-	err := s.Run()
+	err := s.Run(zap.L())
 	assert.Error(err)
 
 	s.ACME.Enable = true
 	// acme with listen port - panic
 	assert.Panics(func() {
-		s.Run()
+		s.Run(zap.L())
 	})
 
 	if TestRunTLS == "false" {
@@ -31,6 +32,6 @@ func TestRun(t *testing.T) {
 	}
 	s.Listen = ""
 	// httpS - failed
-	err = s.Run()
+	err = s.Run(zap.L())
 	assert.Error(err)
 }

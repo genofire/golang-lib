@@ -45,6 +45,11 @@ type Service struct {
 	modules []ModuleRegisterFunc
 }
 
+// SetLog - set new logger
+func (s *Service) SetLog(l *zap.Logger) {
+	s.log = l
+}
+
 // Log - get current logger
 func (s *Service) Log() *zap.Logger {
 	return s.log
