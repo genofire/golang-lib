@@ -29,6 +29,14 @@ type Option struct {
 	DBReRun      bool
 	DBSetup      func(db *database.Database)
 	Mailer       bool
+	Logger       *zap.Logger
+}
+
+func (option Option) log() *zap.Logger {
+	if option.Logger != nil {
+		return option.Logger
+	}
+	return zap.L()
 }
 
 // TestServer - to run it without listen an server
@@ -64,7 +72,7 @@ func NewWithDBSetup(modules web.ModuleRegisterFunc, dbCall func(db *database.Dat
 
 // New allows to configure WebService for testing
 func (option Option) New() (*TestServer, error) {
-	log := zap.L()
+	log := option.log()
 
 	ws := &web.Service{}
 	ws.SetLog(log)
