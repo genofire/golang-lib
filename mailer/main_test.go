@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/zap"
 
 	"github.com/go-mail/mail"
 )
@@ -11,7 +12,9 @@ import (
 func TestSetupAndPing(t *testing.T) {
 	assert := assert.New(t)
 
-	mock, s := NewFakeServer()
+	log := zap.L()
+
+	mock, s := NewFakeServer(log)
 	assert.NotNil(mock)
 	// correct setup
 	err := s.Setup()
@@ -19,7 +22,7 @@ func TestSetupAndPing(t *testing.T) {
 	mock.Close()
 
 	s.SMTPPassword = "wrong"
-	mock, s = newFakeServer(s)
+	mock, s = newFakeServer(s, log)
 	// wrong password
 	err = s.Setup()
 	assert.Error(err)
@@ -29,7 +32,7 @@ func TestSetupAndPing(t *testing.T) {
 func TestSend(t *testing.T) {
 	assert := assert.New(t)
 
-	mock, s := NewFakeServer()
+	mock, s := NewFakeServer(zap.L())
 	assert.NotNil(mock)
 	// correct setup
 	err := s.Setup()
