@@ -21,5 +21,17 @@ func (ws *Service) Bind(r *gin.Engine) {
 	}
 
 	ws.log.Info("bind modules", zap.Int("count", len(ws.modules)))
-	r.Use(static.Serve("/", static.LocalFile(ws.Webroot, false)))
+	if ws.Webroot != "" {
+		ws.WebrootFS  = static.LocalFile(ws.Webroot, false)
+	}
+	r.Use(func(c *gin.Context) {
+		if !ws.WebrootIndexDisable {
+			_, err := ws.WebrootFS.Open(c.Request.URL.Path)
+			if err != nil {
+				c.FileFromFS("/", ws.WebrootFS)
+				return
+			}
+		}
+		c.FileFromFS(c.Request.URL.Path, ws.WebrootFS)
+	})
 }

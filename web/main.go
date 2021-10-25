@@ -10,6 +10,8 @@ maintains a list of modules. When it runs, it executes all of its modules.
 package web
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 
@@ -27,7 +29,9 @@ type Service struct {
 	// config
 	Listen    string `toml:"listen"`
 	AccessLog bool   `toml:"access_log"`
+	WebrootIndexDisable bool `toml:"webroot_index_disable"`
 	Webroot   string `toml:"webroot"`
+	WebrootFS http.FileSystem `toml:"-"`
 	ACME      struct {
 		Enable  bool     `toml:"enable"`
 		Domains []string `toml:"domains"`
