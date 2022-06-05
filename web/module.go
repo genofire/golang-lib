@@ -22,7 +22,7 @@ func (ws *Service) Bind(r *gin.Engine) {
 
 	ws.log.Info("bind modules", zap.Int("count", len(ws.modules)))
 	if ws.Webroot != "" {
-		ws.WebrootFS  = static.LocalFile(ws.Webroot, false)
+		ws.WebrootFS = static.LocalFile(ws.Webroot, false)
 	}
 	r.Use(func(c *gin.Context) {
 		if !ws.WebrootIndexDisable {
