@@ -28,7 +28,13 @@ func (config *Database) setupMigrator(testdata bool) (*gormigrate.Gormigrate, er
 		return nil, ErrNothingToMigrate
 	}
 
-	return gormigrate.New(config.DB, gormigrate.DefaultOptions, migrations), nil
+	return gormigrate.New(config.DB, &gormigrate.Options{
+		TableName:                 "migrations",
+		IDColumnName:              "id",
+		IDColumnSize:              255,
+		UseTransaction:            true,
+		ValidateUnknownMigrations: false,
+	}, migrations), nil
 
 }
 
