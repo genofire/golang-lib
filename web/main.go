@@ -27,23 +27,23 @@ import (
 // A Service stores configuration of a server.
 type Service struct {
 	// config
-	Listen              string          `toml:"listen"`
-	AccessLog           bool            `toml:"access_log"`
-	WebrootIndexDisable bool            `toml:"webroot_index_disable"`
-	Webroot             string          `toml:"webroot"`
-	WebrootFS           http.FileSystem `toml:"-"`
+	Listen              string          `config:"listen" toml:"listen"`
+	AccessLog           bool            `config:"access_log" toml:"access_log"`
+	WebrootIndexDisable bool            `config:"webroot_index_disable" toml:"webroot_index_disable"`
+	Webroot             string          `config:"webroot" toml:"webroot"`
+	WebrootFS           http.FileSystem `config:"-" toml:"-"`
 	ACME                struct {
-		Enable  bool     `toml:"enable"`
-		Domains []string `toml:"domains"`
-		Cache   string   `toml:"cache"`
-	} `toml:"acme"`
+		Enable  bool     `config:"enable" toml:"enable"`
+		Domains []string `config:"domains" toml:"domains"`
+		Cache   string   `config: "cache" toml:"cache"`
+	} `config:"acme" toml:"acme"`
 	Session struct {
-		Name   string `toml:"name"`
-		Secret string `toml:"secret"`
-	} `toml:"session"`
+		Name   string `config:"name" toml:"name"`
+		Secret string `config: "secret" toml:"secret"`
+	} `config:"session" toml:"session"`
 	// internal
-	DB     *gorm.DB        `toml:"-"`
-	Mailer *mailer.Service `toml:"-"`
+	DB     *gorm.DB        `config:"-" toml:"-"`
+	Mailer *mailer.Service `config:"-" toml:"-"`
 
 	log     *zap.Logger
 	modules []ModuleRegisterFunc

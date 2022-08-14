@@ -29,16 +29,16 @@ func (t *fsType) UnmarshalText(input []byte) error {
 
 // FSInfo is a TOML structure storing access information about a file store.
 type FSInfo struct {
-	FSType fsType `toml:"type"`
+	FSType fsType `config:"type" toml:"type"`
 	// file system
-	Root string `toml:",omitempty"`
+	Root string `config:",omitempty" toml:",omitempty"`
 	// s3
-	Endpoint string `toml:",omitempty"`
-	Secure   bool   `toml:",omitempty"`
-	ID       string `toml:",omitempty"`
-	Secret   string `toml:",omitempty"`
-	Bucket   string `toml:",omitempty"`
-	Location string `toml:",omitempty"`
+	Endpoint string `config:",omitempty" toml:",omitempty"`
+	Secure   bool   `config:",omitempty" toml:",omitempty"`
+	ID       string `config:",omitempty" toml:",omitempty"`
+	Secret   string `config:",omitempty" toml:",omitempty"`
+	Bucket   string `config:",omitempty" toml:",omitempty"`
+	Location string `config:",omitempty" toml:",omitempty"`
 }
 
 // Create creates a file store from the information provided.

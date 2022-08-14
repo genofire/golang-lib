@@ -27,7 +27,7 @@ func TestReadTOML(t *testing.T) {
 	assert := assert.New(t)
 
 	a := struct {
-		Text string `toml:"text"`
+		Text string `config:"text" toml:"text"`
 	}{}
 
 	err := ReadTOML("testfiles/donoexists", &a)
@@ -45,7 +45,7 @@ func TestSaveTOML(t *testing.T) {
 	assert := assert.New(t)
 
 	type to struct {
-		Value int `toml:"v"`
+		Value int `config:"v" toml:"v"`
 	}
 	toSave := to{Value: 3}
 

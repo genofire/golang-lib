@@ -9,11 +9,11 @@ import (
 
 // Database struct to read from config
 type Database struct {
-	DB                *gorm.DB        `toml:"-"`
-	Connection        string          `toml:"connection"`
-	Debug             bool            `toml:"debug"`
-	Testdata          bool            `toml:"testdata"`
-	LogLevel          logger.LogLevel `toml:"log_level"`
+	DB                *gorm.DB        `config:"-" toml:"-"`
+	Connection        string          `config:"connection" toml:"connection"`
+	Debug             bool            `config:"debug" toml:"debug"`
+	Testdata          bool            `config:"testdata" toml:"testdata"`
+	LogLevel          logger.LogLevel `config:"log_level" toml:"log_level"`
 	migrations        map[string]*gormigrate.Migration
 	migrationTestdata map[string]*gormigrate.Migration
 }

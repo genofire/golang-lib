@@ -12,7 +12,7 @@ func TestReadJSON(t *testing.T) {
 	assert := assert.New(t)
 
 	a := struct {
-		Text string `toml:"text"`
+		Text string `config:"text" toml:"text"`
 	}{}
 
 	err := ReadJSON("testfiles/donoexists", &a)

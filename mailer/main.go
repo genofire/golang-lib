@@ -6,13 +6,13 @@ import (
 
 // Service to send mail
 type Service struct {
-	SMTPHost     string       `toml:"smtp_host"`
-	SMTPPort     int          `toml:"smtp_port"`
-	SMTPUsername string       `toml:"smtp_username"`
-	SMTPPassword string       `toml:"smtp_password"`
-	SMTPSSL      bool         `toml:"smtp_ssl"`
-	Dailer       *mail.Dialer `toml:"-"`
-	From         string       `toml:"from"`
+	SMTPHost     string       `config:"smtp_host" toml:"smtp_host"`
+	SMTPPort     int          `config:"smtp_port" toml:"smtp_port"`
+	SMTPUsername string       `config:"smtp_username" toml:"smtp_username"`
+	SMTPPassword string       `config:"smtp_password" toml:"smtp_password"`
+	SMTPSSL      bool         `config:"smtp_ssl"  toml:"smtp_ssl"`
+	Dailer       *mail.Dialer `config:"-" toml:"-"`
+	From         string       `config:"from" toml:"from"`
 }
 
 // Ping mailer
