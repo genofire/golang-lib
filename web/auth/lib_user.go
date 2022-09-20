@@ -12,20 +12,28 @@ import (
 	"dev.sum7.eu/genofire/golang-lib/web"
 )
 
-// GetCurrentUserID get UserID of session in golang-gin
-func GetCurrentUserID(c *gin.Context) (uuid.UUID, bool) {
+// IsLoginWithUserID get UserID of session in golang-gin
+func IsLoginWithUserID(c *gin.Context) (uuid.UUID, bool) {
 	session := sessions.Default(c)
 
 	v := session.Get("user_id")
 	if v == nil {
-		c.JSON(http.StatusUnauthorized, web.HTTPError{
-			Message: ErrAPINoSession.Error(),
-		})
 		return uuid.Nil, false
 	}
 
 	id := uuid.MustParse(v.(string))
 	return id, true
+}
+
+// GetCurrentUserID get UserID of session in golang-gin
+func GetCurrentUserID(c *gin.Context) (uuid.UUID, bool) {
+	id, ok := IsLoginWithUserID(c)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, web.HTTPError{
+			Message: ErrAPINoSession.Error(),
+		})
+	}
+	return id, ok
 }
 
 // GetCurrentUser get User of session from database in golang-gin
