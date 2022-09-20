@@ -1,16 +1,47 @@
 package database
 
 import (
+	"net/url"
+
 	gormigrate "github.com/genofire/gormigrate/v2"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
 
+type ConnectionURI struct {
+	URI string `config:"string"`
+	Hostname string `config:"hostname"`
+	Username string `config:"username"`
+	Password string `config:"password"`
+	DatabaseName string `config:"dbname"`
+	ExtraOptions string `config:"extra_options"`
+}
+
+func (uri *ConnectionURI) String() string {
+	u,_ := url.Parse(uri.URI)
+	if u.Scheme == "" {
+		u.Scheme = "postgresql"
+	}
+	if uri.Hostname != "" {
+		u.Host = uri.Hostname
+	}
+	if uri.Username != "" && uri.Password != "" {
+		u.User = url.UserPassword(uri.Username, uri.Password)
+	}
+	if uri.DatabaseName != "" {
+		u.Path = uri.DatabaseName
+	}
+	if uri.ExtraOptions != "" {
+		u.RawQuery = uri.ExtraOptions
+	}
+	return u.String()
+}
+
 // Database struct to read from config
 type Database struct {
 	DB                *gorm.DB        `config:"-" toml:"-"`
-	Connection        string          `config:"connection" toml:"connection"`
+	Connection        ConnectionURI   `config:"connection" toml:"connection"`
 	Debug             bool            `config:"debug" toml:"debug"`
 	Testdata          bool            `config:"testdata" toml:"testdata"`
 	LogLevel          logger.LogLevel `config:"log_level" toml:"log_level"`
@@ -42,7 +73,7 @@ func (config *Database) ReRun() error {
 }
 
 func (config *Database) run() error {
-	db, err := gorm.Open(postgres.Open(config.Connection), &gorm.Config{
+	db, err := gorm.Open(postgres.Open(config.Connection.String()), &gorm.Config{
 		Logger: logger.Default.LogMode(config.LogLevel),
 	})
 	if err != nil {

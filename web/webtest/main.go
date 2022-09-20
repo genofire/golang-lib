@@ -19,7 +19,7 @@ import (
 
 var (
 	// DBConnection - url to database on setting up default WebService for webtest
-	DBConnection = "user=root password=root dbname=defaultdb host=localhost port=26257 sslmode=disable"
+	DBConnection = "postgresql://root:root@localhost:26257/defaultdb?sslmode=disable"
 )
 
 // Option to configure TestServer
@@ -87,11 +87,11 @@ func (option Option) New() (*TestServer, error) {
 	// db setup
 	if option.Database {
 		ts.DB = &database.Database{
-			Connection: DBConnection,
 			Testdata:   true,
 			Debug:      false,
 			LogLevel:   0,
 		}
+		ts.DB.Connection.URI = DBConnection
 		if option.DBSetup != nil {
 			option.DBSetup(ts.DB)
 		}
