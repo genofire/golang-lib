@@ -9,7 +9,7 @@ require (
 	github.com/gin-contrib/sessions v0.0.3
 	github.com/gin-contrib/static v0.0.1
 	github.com/gin-gonic/autotls v0.0.3
-	github.com/gin-gonic/gin v1.7.2
+	github.com/gin-gonic/gin v1.7.7
 	github.com/go-gormigrate/gormigrate/v2 v2.0.0
 	github.com/go-mail/mail v2.3.1+incompatible
 	github.com/google/uuid v1.2.0
