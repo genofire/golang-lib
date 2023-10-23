@@ -15,7 +15,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
-	"dev.sum7.eu/genofire/golang-lib/web/file"
+	"codeberg.org/genofire/golang-lib/web/file"
 )
 
 type TestFS struct {

@@ -1,8 +1,8 @@
 package file
 
 import (
-	"dev.sum7.eu/genofire/golang-lib/web/file/fs"
-	"dev.sum7.eu/genofire/golang-lib/web/file/s3"
+	"codeberg.org/genofire/golang-lib/web/file/fs"
+	"codeberg.org/genofire/golang-lib/web/file/s3"
 )
 
 // fsType represents a type of file store.

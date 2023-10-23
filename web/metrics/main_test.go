@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"dev.sum7.eu/genofire/golang-lib/web/webtest"
+	"codeberg.org/genofire/golang-lib/web/webtest"
 )
 
 func TestMetricsLoaded(t *testing.T) {

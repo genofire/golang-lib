@@ -12,9 +12,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 
-	"dev.sum7.eu/genofire/golang-lib/database"
-	"dev.sum7.eu/genofire/golang-lib/mailer"
-	"dev.sum7.eu/genofire/golang-lib/web"
+	"codeberg.org/genofire/golang-lib/database"
+	"codeberg.org/genofire/golang-lib/mailer"
+	"codeberg.org/genofire/golang-lib/web"
 )
 
 var (

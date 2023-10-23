@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 
-	"dev.sum7.eu/genofire/golang-lib/web"
+	"codeberg.org/genofire/golang-lib/web"
 )
 
 // PasswordWithForgetCode - JSON Request to set password without login

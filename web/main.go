@@ -20,7 +20,7 @@ import (
 	"golang.org/x/crypto/acme/autocert"
 
 	// internal
-	"dev.sum7.eu/genofire/golang-lib/mailer"
+	"codeberg.org/genofire/golang-lib/mailer"
 	"gorm.io/gorm"
 )
 

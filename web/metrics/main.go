@@ -14,7 +14,7 @@ import (
 	// db metrics
 	gormPrometheus "gorm.io/plugin/prometheus"
 
-	"dev.sum7.eu/genofire/golang-lib/web"
+	"codeberg.org/genofire/golang-lib/web"
 )
 
 var (

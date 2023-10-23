@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 
-	"dev.sum7.eu/genofire/golang-lib/web"
+	"codeberg.org/genofire/golang-lib/web"
 )
 
 type login struct {

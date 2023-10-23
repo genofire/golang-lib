@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 
-	"dev.sum7.eu/genofire/golang-lib/web"
+	"codeberg.org/genofire/golang-lib/web"
 )
 
 // MiddlewareLogin if user id in session for golang-gin

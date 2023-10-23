@@ -1,7 +1,7 @@
 # golang-lib
-[![DroneCI](https://ci.sum7.eu/api/badges/genofire/golang-lib/status.svg?branch=main)](https://ci.sum7.eu/genofire/golang-lib)
-[![Go Report Card](https://goreportcard.com/badge/dev.sum7.eu/genofire/golang-lib)](https://goreportcard.com/report/dev.sum7.eu/genofire/golang-lib)
-[![Go Reference](https://pkg.go.dev/badge/dev.sum7.eu/genofire/golang-lib.svg)](https://pkg.go.dev/dev.sum7.eu/genofire/golang-lib)
+[![DroneCI](https://ci.codeberg.org/api/badges/genofire/golang-lib/status.svg?branch=main)](https://ci.codeberg.org/genofire/golang-lib)
+[![Go Report Card](https://goreportcard.com/badge/codeberg.org/genofire/golang-lib)](https://goreportcard.com/report/codeberg.org/genofire/golang-lib)
+[![Go Reference](https://pkg.go.dev/badge/codeberg.org/genofire/golang-lib.svg)](https://pkg.go.dev/codeberg.org/genofire/golang-lib)
 
 some packages collected for easy and often used functions
 

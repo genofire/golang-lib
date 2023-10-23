@@ -5,8 +5,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"dev.sum7.eu/genofire/golang-lib/web/file"
-	"dev.sum7.eu/genofire/golang-lib/web/file/s3"
+	"codeberg.org/genofire/golang-lib/web/file"
+	"codeberg.org/genofire/golang-lib/web/file/s3"
 )
 
 // TODO: actually test, either using little dummies or using sth like play.min.io

@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"dev.sum7.eu/genofire/golang-lib/database"
+	"codeberg.org/genofire/golang-lib/database"
 
 	"github.com/knadh/koanf"
 	"github.com/knadh/koanf/parsers/toml"

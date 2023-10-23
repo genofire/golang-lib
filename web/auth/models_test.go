@@ -8,7 +8,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 
-	"dev.sum7.eu/genofire/golang-lib/database"
+	"codeberg.org/genofire/golang-lib/database"
 
 	"github.com/stretchr/testify/assert"
 )

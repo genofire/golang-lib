@@ -1,4 +1,4 @@
-module dev.sum7.eu/genofire/golang-lib
+module codeberg.org/genofire/golang-lib
 
 go 1.16
 

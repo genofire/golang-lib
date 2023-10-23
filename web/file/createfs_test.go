@@ -3,8 +3,8 @@ package file_test
 import (
 	"testing"
 
-	fsfile "dev.sum7.eu/genofire/golang-lib/file"
-	"dev.sum7.eu/genofire/golang-lib/web/file"
+	fsfile "codeberg.org/genofire/golang-lib/file"
+	"codeberg.org/genofire/golang-lib/web/file"
 	"github.com/stretchr/testify/assert"
 )
 

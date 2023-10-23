@@ -3,7 +3,7 @@ package auth
 import (
 	"net/http"
 
-	"dev.sum7.eu/genofire/golang-lib/web"
+	"codeberg.org/genofire/golang-lib/web"
 	"github.com/gin-gonic/gin"
 )
 

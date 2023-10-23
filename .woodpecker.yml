@@ -19,7 +19,7 @@ pipeline:
     group: test
     commands:
       - go get -d -t ./...
-      - go test -ldflags "-X dev.sum7.eu/genofire/golang-lib/web.TestRunTLS=false -X dev.sum7.eu/genofire/golang-lib/web/webtest.DBConnection=postgres://root:root@database:26257/defaultdb?sslmode=disable -X dev.sum7.eu/genofire/golang-lib/database.DBConnection=postgres://root:root@database:26257/defaultdb?sslmode=disable" $(go list ./... | grep -v /vendor/) -v -failfast -p 1 -coverprofile .testCoverage.txt
+      - go test -ldflags "-X codeberg.org/genofire/golang-lib/web.TestRunTLS=false -X codeberg.org/genofire/golang-lib/web/webtest.DBConnection=postgres://root:root@database:26257/defaultdb?sslmode=disable -X codeberg.org/genofire/golang-lib/database.DBConnection=postgres://root:root@database:26257/defaultdb?sslmode=disable" $(go list ./... | grep -v /vendor/) -v -failfast -p 1 -coverprofile .testCoverage.txt
       - go tool cover -func=".testCoverage.txt"
 
   test-race:
@@ -27,4 +27,4 @@ pipeline:
     group: test-race
     commands:
       - go get -d -t ./...
-      - go test -ldflags "-X dev.sum7.eu/genofire/golang-lib/web.TestRunTLS=false -X dev.sum7.eu/genofire/golang-lib/web/webtest.DBConnection=postgres://root:root@database:26257/defaultdb?sslmode=disable -X dev.sum7.eu/genofire/golang-lib/database.DBConnection=postgres://root:root@database:26257/defaultdb?sslmode=disable" $(go list ./... | grep -v /vendor/) -race
+      - go test -ldflags "-X codeberg.org/genofire/golang-lib/web.TestRunTLS=false -X codeberg.org/genofire/golang-lib/web/webtest.DBConnection=postgres://root:root@database:26257/defaultdb?sslmode=disable -X codeberg.org/genofire/golang-lib/database.DBConnection=postgres://root:root@database:26257/defaultdb?sslmode=disable" $(go list ./... | grep -v /vendor/) -race

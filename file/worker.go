@@ -3,7 +3,7 @@ package file
 import (
 	"time"
 
-	"dev.sum7.eu/genofire/golang-lib/worker"
+	"codeberg.org/genofire/golang-lib/worker"
 )
 
 // NewSaveJSONWorker Starts a worker, which save periodly data to json file

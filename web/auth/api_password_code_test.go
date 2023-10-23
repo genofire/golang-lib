@@ -7,8 +7,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
-	"dev.sum7.eu/genofire/golang-lib/web"
-	"dev.sum7.eu/genofire/golang-lib/web/webtest"
+	"codeberg.org/genofire/golang-lib/web"
+	"codeberg.org/genofire/golang-lib/web/webtest"
 )
 
 func TestAPIPasswordCode(t *testing.T) {
